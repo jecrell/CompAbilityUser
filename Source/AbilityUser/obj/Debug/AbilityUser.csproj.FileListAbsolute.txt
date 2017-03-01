@@ -8,3 +8,6 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\AbilityUser\AbilityUser\A
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\AbilityUser\AbilityUser\AbilityUser\obj\Debug\AbilityUser.csprojResolveAssemblyReference.cache
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\AbilityUser\AbilityUser\AbilityUser\obj\Debug\AbilityUser.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\AbilityUser\AbilityUser\AbilityUser\obj\Debug\AbilityUser.pdb
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Source\AbilityUser\obj\Debug\AbilityUser.csprojResolveAssemblyReference.cache
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Source\AbilityUser\obj\Debug\AbilityUser.dll
+C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Assemblies\AbilityUser.dll
