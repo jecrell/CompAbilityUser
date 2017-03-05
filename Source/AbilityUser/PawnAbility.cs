@@ -18,6 +18,7 @@ namespace AbilityUser
             this.def = pdef;
             this.PowerButton = pdef.uiIcon;
             this.InitializePawnComps(user);
+            ThingIDMaker.GiveIDTo(this);
         }
 
         public void InitializePawnComps(Pawn parent)
@@ -36,9 +37,20 @@ namespace AbilityUser
             }
         }
 
-        public override void PostMake()
+        //public override void PostMake()
+        //{
+
+        //}
+
+        public override void ExposeData()
         {
-            ThingIDMaker.GiveIDTo(this);
+            base.ExposeData();
+            Scribe_References.LookReference<Pawn>(ref this.pawn, "pawn");
+            Scribe_Defs.LookDef<AbilityDef>(ref this.powerdef, "powerdef");
+            if (Scribe.mode == LoadSaveMode.PostLoadInit)
+            {
+                this.PowerButton = powerdef.uiIcon;
+            }
         }
 
         public Pawn pawn;

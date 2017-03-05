@@ -146,10 +146,20 @@ namespace AbilityUser
 
         public virtual bool IsInIgnoreHediffList(Hediff hediff)
         {
-            CompAbilityUser compAbility = Caster.GetComp<CompAbilityUser>();
-            if (compAbility == null) return false;
-            if (compAbility.ignoredHediffs() == null) return false;
-            if (compAbility.ignoredHediffs().Contains(hediff.def)) { Log.Message("IgnoreHediff Passed"); return true; }
+            if (hediff != null)
+            {
+                if (hediff.def != null)
+                {
+                    CompAbilityUser compAbility = Caster.TryGetComp<CompAbilityUser>();
+                    if (compAbility != null)
+                    {
+                        if (compAbility.ignoredHediffs() != null)
+                        {
+                            if (compAbility.ignoredHediffs().Contains(hediff.def)) { Log.Message("IgnoreHediff Passed"); return true; }
+                        }
+                    }
+                }
+            }
             return false;
         }
 
