@@ -58,6 +58,7 @@
     <Compile Include="AbilityPowerManager.cs" />
     <Compile Include="Command_PawnAbility.cs" />
     <Compile Include="CompAbilityUser.cs" />
+    <Compile Include="CompProperties_AbilityUser.cs" />
     <Compile Include="JobDriver_CastAbilitySelf.cs" />
     <Compile Include="JobDriver_CastAbilityVerb.cs" />
     <Compile Include="PawnAbility.cs" />

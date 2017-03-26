@@ -15,20 +15,19 @@ namespace AbilityUser
          Bless you, Ohu."
                                         -Jecrell
     */
+
     public class Command_PawnAbility : Command_Target
     {
-        public CompAbilityUser compAbilityUser;
+        public CompAbilityUser compAbilityUser = null;
+        public Verb verb = null;
+        public static readonly Texture2D EmptyTex = SolidColorMaterials.NewSolidColorTexture(Color.clear);
+        public static readonly Texture2D FullTex = SolidColorMaterials.NewSolidColorTexture(0.5f, 0.5f, 0.5f, 0.6f);
+
 
         public Command_PawnAbility(CompAbilityUser compAbilityUser)
         {
             this.compAbilityUser = compAbilityUser;
         }
-
-        public Verb verb;
-
-        private Texture2D EmptyTex = SolidColorMaterials.NewSolidColorTexture(Color.clear);
-
-        private Texture2D FullTex = SolidColorMaterials.NewSolidColorTexture(0.5f, 0.5f, 0.5f, 0.6f);
 
         public override void ProcessInput(Event ev)
         {
@@ -37,7 +36,6 @@ namespace AbilityUser
 
         public override GizmoResult GizmoOnGUI(Vector2 topLeft)
         {
-            //Log.ErrorOnce("Command_PawnAbility.GizmoOnGUI Called", 7213123);
             Rect rect = new Rect(topLeft.x, topLeft.y, this.Width, 75f);
             bool flag = false;
             if (Mouse.IsOver(rect))
@@ -57,7 +55,7 @@ namespace AbilityUser
             Widgets.DrawTextureFitted(new Rect(rect), badTex, this.iconDrawScale * 0.85f, this.iconProportions, this.iconTexCoords);
             GUI.color = Color.white;
             bool flag2 = false;
-            Rect rectFil = new Rect(topLeft.x, topLeft.y, this.Width, this.Width);
+            //Rect rectFil = new Rect(topLeft.x, topLeft.y, this.Width, this.Width);
 
             KeyCode keyCode = (this.hotKey != null) ? this.hotKey.MainKey : KeyCode.None;
             if (keyCode != KeyCode.None && !GizmoGridDrawer.drawnHotKeys.Contains(keyCode))
@@ -134,7 +132,7 @@ namespace AbilityUser
             }
         }
 
-        public static void FillableBarBottom(Rect rect, float fillPercent, Texture2D fillTex, Texture2D bgTex, bool doBorder)
+        public void FillableBarBottom(Rect rect, float fillPercent, Texture2D fillTex, Texture2D bgTex, bool doBorder)
         {
             if (doBorder)
             {

@@ -12,8 +12,6 @@ namespace AbilityUser
 
         public int CastTime = 0;
 
-        public string IconGraphicPath;
-
         public VerbProperties_Ability MainVerb;
     }
 }

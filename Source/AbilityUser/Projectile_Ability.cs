@@ -13,8 +13,8 @@ namespace AbilityUser
     public class Projectile_Ability : Projectile
     {
         public Pawn Caster;
-
         public Thing selectedTarget;
+        public Vector3 targetVec;
 
         public int TicksToImpact
         {
@@ -23,8 +23,6 @@ namespace AbilityUser
                 return this.ticksToImpact;
             }
         }
-
-        public Vector3 targetVec;
 
         public Vector3 ProjectileDrawPos
         {
@@ -57,7 +55,6 @@ namespace AbilityUser
                 Vector3 vector = this.ProjectileDrawPos;
                 Vector3 distance = this.destination - this.origin;
                 Vector3 curpos = this.destination - this.Position.ToVector3();
-                //             var num = 1 - (Mathf.Sqrt(Mathf.Pow(curpos.x, 2) + Mathf.Pow(curpos.z, 2)) / (Mathf.Sqrt(Mathf.Pow(distance.x, 2) + Mathf.Pow(distance.z, 2))));
                 float angle = 0f;
                 Material mat = this.Graphic.MatSingle;
                 Vector3 s = new Vector3(2.5f, 1f, 2.5f);
@@ -165,31 +162,6 @@ namespace AbilityUser
 
         public virtual bool CanOverpower(Pawn caster, Thing hitThing)
         {
-            //if (hitThing is Pawn)
-            //{
-            //    Pawn target = hitThing as Pawn;
-            //    PsykerPowerLevel casterPower = caster.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel;
-            //    PsykerPowerLevel targetPower = target.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel;
-            //    if (casterPower >= targetPower && targetPower != PsykerPowerLevel.Omega || target.Faction == Faction.OfPlayer)
-            //    {
-            //        if (!target.Faction.HostileTo(Faction.OfPlayer) && target.Faction != Faction.OfPlayer)
-            //        {
-            //            target.Faction.AffectGoodwillWith(Faction.OfPlayer, -10);
-            //        }
-            //        return true;
-            //    }
-            //    else
-            //    {
-            //        if (!target.Faction.HostileTo(Faction.OfPlayer))
-            //        {
-            //            target.Faction.AffectGoodwillWith(Faction.OfPlayer, -30);
-            //        }
-            //        Caster.health.AddHediff(HediffDefOf.PsychicShock);
-            //        return false;
-            //    }
-            //}
-            //return false;
-
             return true;
         }
     }

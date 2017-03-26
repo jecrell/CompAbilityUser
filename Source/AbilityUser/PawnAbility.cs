@@ -11,6 +11,13 @@ namespace AbilityUser
 {
     public class PawnAbility : ThingWithComps
     {
+        
+        public Pawn pawn;
+        private List<ThingComp> comps = new List<ThingComp>();
+        public AbilityDef powerdef;
+        public CompProperties MainEffectProps;
+        public Texture2D PowerButton;
+
         public PawnAbility(Pawn user, AbilityDef pdef)
         {
             this.pawn = user;
@@ -36,12 +43,7 @@ namespace AbilityUser
                 this.comps.Add(thingComp);
             }
         }
-
-        //public override void PostMake()
-        //{
-
-        //}
-
+        
         public override void ExposeData()
         {
             base.ExposeData();
@@ -52,16 +54,6 @@ namespace AbilityUser
                 this.PowerButton = powerdef.uiIcon;
             }
         }
-
-        public Pawn pawn;
-
-        private List<ThingComp> comps = new List<ThingComp>();
-
-        public AbilityDef powerdef;
-
-        public CompProperties MainEffectProps;
-
-        public Texture2D PowerButton;
 
     }
 }

@@ -29,7 +29,7 @@ namespace AbilityUser
             {
                 if (compAbilityUser.IsActive)
                 {
-                    //PsykerUtility.PsykerShockEvents(compAbilityUser, compAbilityUser.curPower.PowerLevel);
+
                 }
                 compAbilityUser.IsActive = false;
                 compAbilityUser.ShotFired = true;

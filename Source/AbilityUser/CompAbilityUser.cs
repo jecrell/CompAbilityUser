@@ -17,36 +17,26 @@ namespace AbilityUser
     
     public class CompAbilityUser : CompUseEffect
     {
-
+        
         public AbilityPowerManager abilityPowerManager;
-
-        public bool ShotFired = true;
-
-        public int ticksToImpact = 500;
-
         public LocalTargetInfo CurTarget;
-
         public AbilityDef curPower;
-
         public Verb_UseAbility curVerb;
-
         public Rot4 curRotation;
-
+        public bool IsActive;
+        public bool ShotFired = true;
+        public bool IsInitialized = false;
         public float TicksToCastPercentage = 1;
-
+        public int ticksToImpact = 500;
         public int TicksToCastMax = 100;
-
         public int TicksToCast = 0;
 
-        public bool IsActive;
-
-        public bool IsInitialized = false;
-
-        //static CompAbilityUser()
-        //{
-
-        //}
-
+        public List<PawnAbility> Powers = new List<PawnAbility>();
+        public List<PawnAbility> temporaryWeaponPowers = new List<PawnAbility>();
+        public List<PawnAbility> temporaryApparelPowers = new List<PawnAbility>();
+        public List<PawnAbility> allPowers = new List<PawnAbility>();
+        public List<Verb_UseAbility> AbilityVerbs = new List<Verb_UseAbility>();
+        public Dictionary<PawnAbility, Verb_UseAbility> pawnAbilities = new Dictionary<PawnAbility, Verb_UseAbility>();
 
         public Pawn abilityUser
         {
@@ -55,18 +45,12 @@ namespace AbilityUser
                 return this.parent as Pawn;
             }
         }
-
-        public virtual void PostInitialize()
+        public CompProperties_AbilityUser Props
         {
-
-        }
-
-        public virtual void Initialize()
-        {
-            IsInitialized = true;
-            //Log.Message("CompAbilityUser Post Spawn Setup");
-            this.abilityPowerManager = new AbilityPowerManager(this);
-            PostInitialize();
+            get
+            {
+                return (CompProperties_AbilityUser)props;
+            }
         }
 
         public override void PostSpawnSetup()
@@ -88,32 +72,74 @@ namespace AbilityUser
             this.TicksToCastPercentage = (1 - (this.TicksToCast / this.TicksToCastMax));
         }
 
-        public CompProperties_AbilityUser Props
+
+        public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
-            get
+            IEnumerator<Gizmo> enumerator = base.CompGetGizmosExtra().GetEnumerator();
+            while (enumerator.MoveNext())
             {
-                return (CompProperties_AbilityUser)props;
+                Gizmo current = enumerator.Current;
+                yield return current;
             }
+
+
+            foreach (Command_Target comm in GetPawnAbilityVerbs().ToList())
+            {
+                yield return comm;
+            }
+
         }
 
+        public override void PostExposeData()
+        {
+            base.PostExposeData();
+            Scribe_Collections.LookList<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[0]);
+            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[0]);
+            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[0]);
+            Scribe_Collections.LookList<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[0]);
 
-        public List<PawnAbility> Powers = new List<PawnAbility>();
+            Scribe_Values.LookValue<int>(ref this.TicksToCast, "TicksToCast", 0, false);
+            Scribe_Values.LookValue<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
+            Scribe_Values.LookValue<float>(ref this.TicksToCastPercentage, "TicksToCastPercentage", 1, false);
+            Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
+            Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
+            Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
 
-        public List<PawnAbility> temporaryWeaponPowers = new List<PawnAbility>();
+        }
 
-        public List<PawnAbility> temporaryApparelPowers = new List<PawnAbility>();
+        #region virtual
+        public virtual string PostAbilityVerbDesc(Verb_UseAbility verb)
+        {
+            return "";
+        }
 
-        public List<PawnAbility> allPowers = new List<PawnAbility>();
+        public virtual void PostInitialize() { }
 
-        public Dictionary<PawnAbility, Verb_UseAbility> pawnAbilities = new Dictionary<PawnAbility, Verb_UseAbility>();
-
-        public List<Verb_UseAbility> AbilityVerbs = new List<Verb_UseAbility>();
+        public virtual void Initialize()
+        {
+            IsInitialized = true;
+            this.abilityPowerManager = new AbilityPowerManager(this);
+            PostInitialize();
+        }
 
         public virtual List<HediffDef> ignoredHediffs()
         {
             List<HediffDef> result = new List<HediffDef>();
             return result;
         }
+
+
+        public virtual bool CanCastPowerCheck(Verb_UseAbility verbAbility, out string reason)
+        {
+            reason = "";
+            return true;
+        }
+
+        public virtual void PostCastAbilityEffects(Verb_UseAbility verb)
+        {
+
+        }
+        #endregion virtual
 
         public void UpdateAbilities()
         {
@@ -124,6 +150,8 @@ namespace AbilityUser
             abList.AddRange(this.Powers);
 
             abList.AddRange(this.temporaryWeaponPowers);
+
+            this.allPowers.Clear();
 
             this.allPowers = abList;
 
@@ -153,11 +181,6 @@ namespace AbilityUser
                 }
             }
             //       Log.Message(this.PawnAbilitys.Count.ToString());
-        }
-
-        public virtual string PostAbilityVerbDesc(Verb_UseAbility verb)
-        {
-            return "";
         }
 
         public string GetCooldown(Verb_UseAbility verb)
@@ -255,34 +278,10 @@ namespace AbilityUser
                             }));
                         }
                 }
-
                 yield return command_CastPower;
             }
+            temp = null;
             yield break;
-        }
-
-        public virtual bool CanCastPowerCheck(Verb_UseAbility verbAbility, out string reason)
-        {
-            reason = "";
-            return true;
-        }
-
-
-        public override IEnumerable<Gizmo> CompGetGizmosExtra()
-        {
-            IEnumerator<Gizmo> enumerator = base.CompGetGizmosExtra().GetEnumerator();
-            while (enumerator.MoveNext())
-            {
-                Gizmo current = enumerator.Current;
-                yield return current;
-            }
-
-
-            foreach (Command_Target comm in GetPawnAbilityVerbs().ToList())
-            {
-                yield return comm;
-            }
-
         }
 
 
@@ -335,37 +334,8 @@ namespace AbilityUser
             return act;
         }
 
-        public virtual void PostCastAbilityEffects(Verb_UseAbility verb)
-        {
+ 
 
-        }
-
-
-        public override void PostExposeData()
-        {
-            base.PostExposeData();
-            Scribe_Collections.LookList<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[0]);
-
-            Scribe_Values.LookValue<int>(ref this.TicksToCast, "TicksToCast", 0, false);
-            Scribe_Values.LookValue<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
-            Scribe_Values.LookValue<float>(ref this.TicksToCastPercentage, "TicksToCastPercentage", 1, false);
-            Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
-            Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
-            Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
-
-        }
-
-    }
-
-    public class CompProperties_AbilityUser : CompProperties
-    {
-        public CompProperties_AbilityUser()
-        {
-            compClass = typeof(CompAbilityUser);
-        }
     }
 
 }
