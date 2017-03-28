@@ -209,13 +209,13 @@ namespace AbilityUser
 
                 Command_PawnAbility command_CastPower = new Command_PawnAbility(this);
                 command_CastPower.verb = newVerb;
-                command_CastPower.defaultLabel = allPowers[j].def.LabelCap;
+                command_CastPower.defaultLabel = allPowers[j].powerdef.LabelCap;
 
 
                 string coolDesc = GetCooldown(newVerb);
                 string postDesc = PostAbilityVerbDesc(newVerb);
                 StringBuilder desc = new StringBuilder();
-                desc.AppendLine(allPowers[j].def.description);
+                desc.AppendLine(allPowers[j].powerdef.description);
                 if (coolDesc != "") desc.AppendLine(coolDesc);
                 if (postDesc != "") desc.AppendLine(postDesc);
                 command_CastPower.defaultDesc = desc.ToString();
@@ -226,7 +226,7 @@ namespace AbilityUser
                 {
                     command_CastPower.targetingParams = TargetingParameters.ForSelf(this.abilityUser);
                 }
-                command_CastPower.icon = allPowers[j].def.uiIcon;
+                command_CastPower.icon = allPowers[j].powerdef.uiIcon;
                 string str;
                 if (FloatMenuUtility.GetAttackAction(this.abilityUser, LocalTargetInfo.Invalid, out str) == null)
                 {
@@ -234,7 +234,7 @@ namespace AbilityUser
                 }
                 command_CastPower.action = delegate (Thing target)
                 {
-                    Action attackAction = CompAbilityUser.TryCastAbility(abilityUser, target, this, newVerb, allPowers[j].def as AbilityDef);
+                    Action attackAction = CompAbilityUser.TryCastAbility(abilityUser, target, this, newVerb, allPowers[j].powerdef as AbilityDef);
                     if (attackAction != null)
                     {
                         attackAction();

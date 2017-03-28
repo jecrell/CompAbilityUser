@@ -30,7 +30,7 @@ namespace AbilityUser
 
         public void AddPawnAbility(AbilityDef psydef)
         {
-            if (!this.CompAbilityUser.Powers.Any(x => x.def.defName == psydef.defName))
+            if (!this.CompAbilityUser.Powers.Any(x => x.powerdef.defName == psydef.defName))
             {
                 this.CompAbilityUser.Powers.Add(new PawnAbility(this.CompAbilityUser.abilityUser, psydef));
             }
