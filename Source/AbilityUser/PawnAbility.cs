@@ -19,31 +19,42 @@ namespace AbilityUser
         public CompProperties MainEffectProps;
         public Texture2D PowerButton;
 
+        public PawnAbility()
+        {
+
+        }
+
+        public PawnAbility(CompAbilityUser comp)
+        {
+            this.pawn = comp.abilityUser;
+        }
+
         public PawnAbility(Pawn user, AbilityDef pdef)
         {
             this.pawn = user;
             this.powerdef = pdef;
             //this.def = pdef;
             this.PowerButton = pdef.uiIcon;
-            this.InitializePawnComps(user);
+            //this.InitializePawnComps(user);
             //ThingIDMaker.GiveIDTo(this);
         }
 
-        public void InitializePawnComps(Pawn parent)
-        {
-            //           Log.Message("Initializng Pawn Comps");
-            //           Log.Message(parent.ToString());
-            for (int i = 0; i < this.powerdef.comps.Count; i++)
-            {
-                ThingComp thingComp = (ThingComp)Activator.CreateInstance(this.powerdef.comps[i].compClass);
-                //              if (thingComp == null) Log.Message("NoTHingComp");
-                thingComp.parent = parent;
-                // if (this.comps == null) Log.Message("NoCompslist");
+        //public void InitializePawnComps(Pawn parent)
+        //{
+        //    //           Log.Message("Initializng Pawn Comps");
+        //    //           Log.Message(parent.ToString());
+        //    for (int i = 0; i < this.powerdef.comps.Count; i++)
+        //    {
+        //        ThingComp thingComp = (ThingComp)Activator.CreateInstance(this.powerdef.comps[i].compClass);
+        //        //              if (thingComp == null) Log.Message("NoTHingComp");
+        //        thingComp.parent = parent;
+        //        // if (this.comps == null) Log.Message("NoCompslist");
 
-                thingComp.Initialize(this.powerdef.comps[i]);
-                this.comps.Add(thingComp);
-            }
-        }
+        //        thingComp.Initialize(this.powerdef.comps[i]);
+        //        this.comps.Add(thingComp);
+        //        parent.AllComps.Add(thingComp);
+        //    }
+        //}
         
 
         public void ExposeData()

@@ -38,11 +38,16 @@ namespace AbilityUser
         public List<Verb_UseAbility> AbilityVerbs = new List<Verb_UseAbility>();
         public Dictionary<PawnAbility, Verb_UseAbility> pawnAbilities = new Dictionary<PawnAbility, Verb_UseAbility>();
 
+        public Pawn abilityUserSave = null;
         public Pawn abilityUser
         {
             get
             {
-                return this.parent as Pawn;
+                if (abilityUserSave == null)
+                {
+                    abilityUserSave = this.parent as Pawn;
+                }
+                return abilityUserSave;
             }
         }
         public CompProperties_AbilityUser Props
@@ -60,8 +65,8 @@ namespace AbilityUser
 
         public override void CompTick()
         {
-            if (!IsInitialized) Initialize();
             base.CompTick();
+            if (!IsInitialized) Initialize();
             this.TicksToCast--;
             if (this.TicksToCast < 0)
             {
@@ -92,11 +97,23 @@ namespace AbilityUser
 
         public override void PostExposeData()
         {
-            base.PostExposeData();
-            Scribe_Collections.LookList<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[0]);
-            Scribe_Collections.LookList<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[0]);
+            //base.PostExposeData();
+            Scribe_Collections.LookList<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[]
+                {
+                    this,
+                });
+            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[]
+                {
+                    this,
+                });
+            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[]
+                {
+                    this,
+                });
+            Scribe_Collections.LookList<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[]
+                {
+                    this,
+                });
 
             Scribe_Values.LookValue<int>(ref this.TicksToCast, "TicksToCast", 0, false);
             Scribe_Values.LookValue<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
@@ -104,7 +121,7 @@ namespace AbilityUser
             Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
             Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
             Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
-
+            Log.Message("PostExposeData Called: AbilityUser");
         }
 
         #region virtual
