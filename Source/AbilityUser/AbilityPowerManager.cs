@@ -21,6 +21,7 @@ namespace AbilityUser
 
         public void Initialize()
         {
+
         }
 
         
@@ -33,6 +34,17 @@ namespace AbilityUser
             if (!this.CompAbilityUser.Powers.Any(x => x.powerdef.defName == psydef.defName))
             {
                 this.CompAbilityUser.Powers.Add(new PawnAbility(this.CompAbilityUser.abilityUser, psydef));
+            }
+
+            this.CompAbilityUser.UpdateAbilities();
+        }
+
+        public void RemovePawnAbility(AbilityDef abilityDef)
+        {
+            PawnAbility abilityToRemove = this.CompAbilityUser.Powers.FirstOrDefault(x => x.powerdef.defName == abilityDef.defName);
+            if (abilityToRemove != null)
+            {
+                this.CompAbilityUser.Powers.Remove(abilityToRemove);
             }
 
             this.CompAbilityUser.UpdateAbilities();
