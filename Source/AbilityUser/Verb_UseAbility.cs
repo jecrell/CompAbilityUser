@@ -25,6 +25,7 @@ namespace AbilityUser
             }
         }
 
+        public PawnAbility ability = null;
         public List<LocalTargetInfo> TargetsAoE = new List<LocalTargetInfo>();
 
         //public Need_ForcePool soul
@@ -135,8 +136,9 @@ namespace AbilityUser
                     }
                 }
 
-                abilityUserComp.TicksToCast = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
-                abilityUserComp.TicksToCastMax = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
+                //abilityUserComp.TicksToCast = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
+                //abilityUserComp.TicksToCastMax = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
+                ability.TicksUntilCasting = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
             }
             this.burstShotsLeft = 0;
 

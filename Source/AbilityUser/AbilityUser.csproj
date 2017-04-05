@@ -33,11 +33,10 @@
   <ItemGroup>
     <Reference Include="0Harmony, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Harmony19\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\Harmony109\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>..\..\..\RimWorldWin_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -49,13 +48,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\..\..\RimWorldWin_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AbilityDef.cs" />
     <Compile Include="AbilityDefOf.cs" />
-    <Compile Include="AbilityPowerManager.cs" />
     <Compile Include="Command_PawnAbility.cs" />
     <Compile Include="CompAbilityUser.cs" />
     <Compile Include="CompProperties_AbilityUser.cs" />

@@ -23,15 +23,15 @@ namespace AbilityUser
 
             yield return Toils_Misc.ThrowColonistAttackingMote(TargetIndex.A);
             yield return Toils_Combat.CastVerb(TargetIndex.A, true);
-            compAbilityUser.IsActive = true;
+            //compAbilityUser.IsActive = true;
 
             this.AddFinishAction(() =>
             {
-                if (compAbilityUser.IsActive)
-                {
+                //if (compAbilityUser.IsActive)
+                //{
 
-                }
-                compAbilityUser.IsActive = false;
+                //}
+                //compAbilityUser.IsActive = false;
                 compAbilityUser.ShotFired = true;
             });
         }

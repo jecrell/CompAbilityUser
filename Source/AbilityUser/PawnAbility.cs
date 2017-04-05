@@ -18,6 +18,7 @@ namespace AbilityUser
         public AbilityDef powerdef;
         public CompProperties MainEffectProps;
         public Texture2D PowerButton;
+        public int TicksUntilCasting = -1;
 
         public PawnAbility()
         {
@@ -37,6 +38,38 @@ namespace AbilityUser
             this.PowerButton = pdef.uiIcon;
             //this.InitializePawnComps(user);
             //ThingIDMaker.GiveIDTo(this);
+        }
+
+        public void PawnAbilityTick()
+        {
+            if (TicksUntilCasting > -1) TicksUntilCasting--;
+        }
+
+        public bool CanFire
+        {
+            get
+            {
+                if (TicksUntilCasting == -1 || TicksUntilCasting < 0) return true;
+                return false;
+            }
+        }
+
+        public int MaxCastingTicks
+        {
+            get
+            { 
+                if (this.powerdef != null)
+                {
+                    if (this.powerdef.MainVerb != null)
+                    {
+                        if (this.powerdef.MainVerb.SecondsToRecharge > 0)
+                        {
+                            return (int)(this.powerdef.MainVerb.SecondsToRecharge * GenTicks.TicksPerRealSecond);
+                        }
+                    }
+                }
+                return 120;
+            }
         }
 
         //public void InitializePawnComps(Pawn parent)
@@ -60,6 +93,7 @@ namespace AbilityUser
         public void ExposeData()
         {
             //base.ExposeData();
+            Scribe_Values.LookValue<int>(ref this.TicksUntilCasting, "TicksUntilcasting", -1);
             Scribe_References.LookReference<Pawn>(ref this.pawn, "pawn");
             Scribe_Defs.LookDef<AbilityDef>(ref this.powerdef, "powerdef");
             //Scribe_Collections.LookList<ThingComp>(ref this.comps, "comps", LookMode.Undefined);

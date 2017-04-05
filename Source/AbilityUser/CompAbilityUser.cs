@@ -18,18 +18,18 @@ namespace AbilityUser
     public class CompAbilityUser : CompUseEffect
     {
         
-        public AbilityPowerManager abilityPowerManager;
+        //public AbilityPowerManager abilityPowerManager;
         public LocalTargetInfo CurTarget;
         public AbilityDef curPower;
         public Verb_UseAbility curVerb;
         public Rot4 curRotation;
-        public bool IsActive;
+        //public bool IsActive;
         public bool ShotFired = true;
         public bool IsInitialized = false;
         public float TicksToCastPercentage = 1;
         public int ticksToImpact = 500;
         public int TicksToCastMax = 100;
-        public int TicksToCast = 0;
+        public int TicksToCast = -1;
 
         public List<PawnAbility> Powers = new List<PawnAbility>();
         public List<PawnAbility> temporaryWeaponPowers = new List<PawnAbility>();
@@ -37,6 +37,27 @@ namespace AbilityUser
         public List<PawnAbility> allPowers = new List<PawnAbility>();
         public List<Verb_UseAbility> AbilityVerbs = new List<Verb_UseAbility>();
         public Dictionary<PawnAbility, Verb_UseAbility> pawnAbilities = new Dictionary<PawnAbility, Verb_UseAbility>();
+
+        public void AddPawnAbility(AbilityDef abilityDef)
+        {
+            if (!this.Powers.Any(x => x.powerdef.defName == abilityDef.defName))
+            {
+                this.Powers.Add(new PawnAbility(this.abilityUser, abilityDef));
+            }
+
+            this.UpdateAbilities();
+        }
+
+        public void RemovePawnAbility(AbilityDef abilityDef)
+        {
+            PawnAbility abilityToRemove = this.Powers.FirstOrDefault(x => x.powerdef.defName == abilityDef.defName);
+            if (abilityToRemove != null)
+            {
+                this.Powers.Remove(abilityToRemove);
+            }
+
+            this.UpdateAbilities();
+        }
 
         public Pawn abilityUserSave = null;
         public Pawn abilityUser
@@ -68,11 +89,18 @@ namespace AbilityUser
             base.CompTick();
             if (!IsInitialized) Initialize();
             this.TicksToCast--;
-            if (this.TicksToCast < 0)
+            if (this.TicksToCast < -1)
             {
-                this.IsActive = true;
+                //this.IsActive = true;
                 this.ShotFired = true;
-                this.TicksToCast = 0;
+                this.TicksToCast = -1;
+            }
+            if (Powers != null && Powers.Count > 0)
+            {
+                foreach (PawnAbility power in Powers)
+                {
+                    power.PawnAbilityTick();
+                }
             }
             this.TicksToCastPercentage = (1 - (this.TicksToCast / this.TicksToCastMax));
         }
@@ -118,7 +146,7 @@ namespace AbilityUser
             Scribe_Values.LookValue<int>(ref this.TicksToCast, "TicksToCast", 0, false);
             Scribe_Values.LookValue<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
             Scribe_Values.LookValue<float>(ref this.TicksToCastPercentage, "TicksToCastPercentage", 1, false);
-            Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
+            //Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
             Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
             Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
             Log.Message("PostExposeData Called: AbilityUser");
@@ -135,7 +163,7 @@ namespace AbilityUser
         public virtual void Initialize()
         {
             IsInitialized = true;
-            this.abilityPowerManager = new AbilityPowerManager(this);
+            //this.abilityPowerManager = new AbilityPowerManager(this);
             PostInitialize();
         }
 
@@ -179,6 +207,7 @@ namespace AbilityUser
                 {
                     //Log.Message("UpdateAbilities: Added to AbilityVerbs");
                     newVerb.caster = this.abilityUser;
+                    newVerb.ability = abList[i];
                     newVerb.verbProps = abList[i].powerdef.MainVerb;
                     AbilityVerbs.Add(newVerb);
                 }
@@ -193,6 +222,7 @@ namespace AbilityUser
                 {
                     //Log.Message("UpdateAbilities: Added to pawnAbilities");
                     newVerb.caster = this.abilityUser;
+                    newVerb.ability = pow;
                     newVerb.verbProps = pow.powerdef.MainVerb;
                     pawnAbilities.Add(pow, newVerb);
                 }
@@ -224,7 +254,7 @@ namespace AbilityUser
                 newVerb.caster = this.abilityUser;
                 newVerb.verbProps = temp[j].verbProps;
 
-                Command_PawnAbility command_CastPower = new Command_PawnAbility(this);
+                Command_PawnAbility command_CastPower = new Command_PawnAbility(this, allPowers[i]);
                 command_CastPower.verb = newVerb;
                 command_CastPower.defaultLabel = allPowers[j].powerdef.LabelCap;
 
@@ -279,7 +309,7 @@ namespace AbilityUser
                             newVerb.CasterPawn.NameStringShort
                         }));
                     }
-                    else if (!this.IsActive)
+                    else if (!newVerb.ability.CanFire)
                     {
                         command_CastPower.Disable("PawnAbilityRecharging".Translate(new object[]
                             {

@@ -32,14 +32,14 @@ namespace AbilityUser
 
             Find.Targeter.targetingVerb = verb;
             yield return Toils_Combat.CastVerb(TargetIndex.A, false);
-            CompAbilityUser.IsActive = true;
+            //CompAbilityUser.IsActive = true;
             this.AddFinishAction(() =>
             {
                 //   Log.Message("FinishACtion");
-                if (CompAbilityUser.IsActive)
-                {
+                //if (CompAbilityUser.IsActive)
+                //{
                     //PsykerUtility.PsykerShockEvents(CompAbilityUser, CompAbilityUser.curPower.PowerLevel);
-                }
+                //}
                 CompAbilityUser.ShotFired = true;
             });
         }

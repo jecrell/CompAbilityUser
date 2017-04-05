@@ -20,13 +20,15 @@ namespace AbilityUser
     {
         public CompAbilityUser compAbilityUser = null;
         public Verb verb = null;
+        public PawnAbility pawnAbility = null;
         public static readonly Texture2D EmptyTex = SolidColorMaterials.NewSolidColorTexture(Color.clear);
         public static readonly Texture2D FullTex = SolidColorMaterials.NewSolidColorTexture(0.5f, 0.5f, 0.5f, 0.6f);
 
 
-        public Command_PawnAbility(CompAbilityUser compAbilityUser)
+        public Command_PawnAbility(CompAbilityUser compAbilityUser, PawnAbility ability)
         {
             this.compAbilityUser = compAbilityUser;
+            this.pawnAbility = ability;
         }
 
         public override void ProcessInput(Event ev)
@@ -100,8 +102,10 @@ namespace AbilityUser
             {
                 UIHighlighter.HighlightOpportunity(rect, this.HighlightTag);
             }
-            float x = compAbilityUser.TicksToCast;
-            float y = compAbilityUser.TicksToCastMax;
+            //float x = compAbilityUser.TicksToCast;
+            //float y = compAbilityUser.TicksToCastMax;
+            float x = pawnAbility.TicksUntilCasting;
+            float y = pawnAbility.MaxCastingTicks;
             float fill = x / y;
             Widgets.FillableBar(rect, fill, FullTex, EmptyTex, false);
             if (flag2)
