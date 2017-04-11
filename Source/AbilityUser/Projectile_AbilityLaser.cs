@@ -9,7 +9,7 @@ using RimWorld;
 
 namespace AbilityUser
 {
-    public class Projectile_AbilityLaser : Projectile
+    public class Projectile_AbilityLaser : Projectile_AbilityBase
     {
         // Variables.
         public int tickCounter = 0;
@@ -256,78 +256,11 @@ namespace AbilityUser
             ApplyDamage(this.hitThing);
         }
 
-        /// <summary>
-        /// Applies damage on a collateral pawn or an object.
-        /// </summary>
-        protected void ApplyDamage(Thing hitThing)
-        {
-            if (hitThing != null)
-            {
-                // Impact collateral target.
-                this.Impact(hitThing);
-            }
-            else
-            {
-                this.ImpactSomething();
-            }
-        }
-
-        /// <summary>
-        /// Computes what should be impacted in the DestinationCell.
-        /// </summary>
-        protected void ImpactSomething()
-        {
-            // Check impact on a thick mountain.
-            if (this.def.projectile.flyOverhead)
-            {
-                RoofDef roofDef = this.Map.roofGrid.RoofAt(this.DestinationCell);
-                if (roofDef != null && roofDef.isThickRoof)
-                {
-                    SoundInfo info = SoundInfo.InMap(new TargetInfo(this.DestinationCell, this.Map, false), MaintenanceType.None);
-                    this.def.projectile.soundHitThickRoof.PlayOneShot(info);
-                    return;
-                }
-            }
-
-            // Impact the initial targeted pawn.
-            if (this.assignedTarget != null)
-            {
-                Pawn pawn = this.assignedTarget as Pawn;
-                if (pawn != null && pawn.Downed && (this.origin - this.destination).magnitude > 5f && Rand.Value < 0.2f)
-                {
-                    this.Impact(null);
-                    return;
-                }
-                this.Impact(this.assignedTarget);
-                return;
-            }
-            else
-            {
-                // Impact a pawn in the destination cell if present.
-                Thing thing = this.Map.thingGrid.ThingAt(this.DestinationCell, ThingCategory.Pawn);
-                if (thing != null)
-                {
-                    this.Impact(thing);
-                    return;
-                }
-                // Impact any cover object.
-                foreach (Thing current in this.Map.thingGrid.ThingsAt(this.DestinationCell))
-                {
-                    if (current.def.fillPercent > 0f || current.def.passability != Traversability.Standable)
-                    {
-                        this.Impact(current);
-                        return;
-                    }
-                }
-                this.Impact(null);
-                return;
-            }
-        }
-
+        
         /// <summary>
         /// Impacts a pawn/object or the ground.
         /// </summary>
-        protected override void Impact(Thing hitThing)
+        public override void Impact_Override(Thing hitThing)
         {
             if (hitThing != null)
             {

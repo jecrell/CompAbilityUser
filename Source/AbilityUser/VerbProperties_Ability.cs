@@ -25,14 +25,12 @@ namespace AbilityUser
         public float SecondsToRecharge = 10.0f;
         
         public AbilityTargetCategory AbilityTargetCategory = AbilityTargetCategory.TargetThing;
-        public Type AoETargetClass;
+        public TargetAoEProperties TargetAoEProperties = null;
 
         public bool ReplacesStandardAttack;
 
-        public List<StatModifier> statModifiers;
-        
-        public bool IsDoubleProjectile = false;
-        public ThingDef doubleProjectile;
+        public List<StatModifier> statModifiers = null;
 
+        public List<ExtraDamage> extraDamages = null;
     }
 }

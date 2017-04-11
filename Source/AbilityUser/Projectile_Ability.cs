@@ -10,11 +10,8 @@ using Verse.Sound;
 
 namespace AbilityUser
 {
-    public class Projectile_Ability : Projectile
+    public class Projectile_Ability : Projectile_AbilityBase
     {
-        public Pawn Caster;
-        public Thing selectedTarget;
-        public Vector3 targetVec;
 
         public int TicksToImpact
         {
@@ -70,7 +67,8 @@ namespace AbilityUser
             base.Comps_PostDraw();
         }
 
-        protected override void Impact(Thing hitThing)
+
+        public override void Impact_Override(Thing hitThing)
         {
             base.Impact(hitThing);
             if (hitThing != null)
@@ -132,6 +130,7 @@ namespace AbilityUser
                         ThingDef equipmentDef = this.equipmentDef;
                         DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
                         hitThing.TakeDamage(dinfo);
+                        
                     }
                 }
             }

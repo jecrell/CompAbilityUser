@@ -268,11 +268,17 @@ namespace AbilityUser
                 command_CastPower.defaultDesc = desc.ToString();
 
 
-                command_CastPower.targetingParams = TargetingParameters.ForAttackAny();
-                if (newVerb.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetSelf || newVerb.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetAoE)
-                {
-                    command_CastPower.targetingParams = TargetingParameters.ForSelf(this.abilityUser);
-                }
+                command_CastPower.targetingParams = allPowers[j].powerdef.MainVerb.targetParams;
+                //command_CastPower.targetingParams = TargetingParameters.ForAttackAny();
+
+                //if (newVerb.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetSelf)
+                //{
+                //    command_CastPower.targetingParams = TargetingParameters.ForSelf(this.abilityUser);
+                //}
+                //else
+                //{
+                //    command_CastPower.targetingParams = TargetingParameters.
+                //}
                 command_CastPower.icon = allPowers[j].powerdef.uiIcon;
                 string str;
                 if (FloatMenuUtility.GetAttackAction(this.abilityUser, LocalTargetInfo.Invalid, out str) == null)
@@ -364,10 +370,13 @@ namespace AbilityUser
                 compAbilityUser.CurTarget = null;
                 compAbilityUser.CurTarget = target;
                 compAbilityUser.curVerb = verb;
-                
                 compAbilityUser.curPower = psydef;
-                
-                compAbilityUser.curRotation = target.Thing.Rotation;
+                compAbilityUser.curRotation = Rot4.South;
+                if (target.Thing != null)
+                {
+                    compAbilityUser.curRotation = target.Thing.Rotation;
+                }
+
                 Job job = CompAbilityUser.AbilityJob(verb.useAbilityProps.AbilityTargetCategory, target);
                 job.playerForced = true;
                 job.verbToUse = verb;

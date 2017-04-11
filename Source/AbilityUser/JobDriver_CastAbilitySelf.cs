@@ -22,9 +22,13 @@ namespace AbilityUser
         {
 
             yield return Toils_Misc.ThrowColonistAttackingMote(TargetIndex.A);
-            yield return Toils_Combat.CastVerb(TargetIndex.A, true);
-            //compAbilityUser.IsActive = true;
+            Toil getInRangeToil = Toils_Combat.GotoCastPosition(TargetIndex.A, false);
+            yield return getInRangeToil;
+            Verb_UseAbility verb = pawn.CurJob.verbToUse as Verb_UseAbility;
 
+            Find.Targeter.targetingVerb = verb;
+            yield return Toils_Combat.CastVerb(TargetIndex.A, false);
+            
             this.AddFinishAction(() =>
             {
                 //if (compAbilityUser.IsActive)

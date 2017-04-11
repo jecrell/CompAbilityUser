@@ -49,26 +49,51 @@ namespace AbilityUser
             }
         }
 
+        public override float HighlightFieldRadiusAroundTarget()
+        {
+            float result =  this.verbProps.projectileDef.projectile.explosionRadius;
+            if (this.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties != null)
+            {
+                if (this.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.showRangeOnSelect)
+                {
+                    result = (float)this.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range;
+                }
+            }
+            return result;
+        }
+
         private void UpdateTargets()
         {
             this.TargetsAoE.Clear();
             if (this.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetAoE)
             {
-                if (useAbilityProps.AoETargetClass == null)
+                Log.Message("AoE Called");
+                if (useAbilityProps.TargetAoEProperties == null)
                 {
-                    Log.Error("Tried to Cast AoE-Psyker Power without defining a target class");
+                    Log.Error("Tried to Cast AoE-Ability without defining a target class");
                 }
 
                 List<Thing> targets = new List<Thing>();
-                if (abilityProjectileDef != null && abilityProjectileDef.IsHealer)
+
+                //Handle TargetAoE start location.
+
+                IntVec3 aoeStartPosition = this.caster.PositionHeld;
+                if (!useAbilityProps.TargetAoEProperties.startsFromCaster)
                 {
-                    this.TargetsAoE.Add(new LocalTargetInfo(this.currentTarget.Cell));
-                    targets = this.caster.Map.listerThings.AllThings.Where(x => (x.Position.InHorDistOf(caster.Position, this.useAbilityProps.range)) && (x.GetType() == this.useAbilityProps.AoETargetClass) && !x.Faction.HostileTo(Faction.OfPlayer)).ToList<Thing>();
+                    aoeStartPosition = this.currentTarget.Cell;
                 }
-                else if ((this.useAbilityProps.AoETargetClass == typeof(Plant)) || (this.useAbilityProps.AoETargetClass == typeof(Building)))
+
+
+                //this.TargetsAoE.Add(new LocalTargetInfo(this.currentTarget.Cell));
+
+                //Handle friendly fire targets.
+                if (!useAbilityProps.TargetAoEProperties.friendlyFire)
                 {
-                    targets.Clear();
-                    targets = this.caster.Map.listerThings.AllThings.Where(x => (x.Position.InHorDistOf(caster.Position, this.useAbilityProps.range)) && (x.GetType() == this.useAbilityProps.AoETargetClass)).ToList<Thing>();
+                    targets = this.caster.Map.listerThings.AllThings.Where(x => (x.Position.InHorDistOf(aoeStartPosition, useAbilityProps.TargetAoEProperties.range)) && (x.GetType() == this.useAbilityProps.TargetAoEProperties.targetClass) && !x.Faction.HostileTo(Faction.OfPlayer)).ToList<Thing>();
+                }
+                else if ((this.useAbilityProps.TargetAoEProperties.targetClass == typeof(Plant)) || (this.useAbilityProps.TargetAoEProperties.targetClass == typeof(Building)))
+                {
+                    targets = this.caster.Map.listerThings.AllThings.Where(x => (x.Position.InHorDistOf(aoeStartPosition, useAbilityProps.TargetAoEProperties.range)) && (x.GetType() == this.useAbilityProps.TargetAoEProperties.targetClass)).ToList<Thing>();
                     foreach (Thing targ in targets)
                     {
                         LocalTargetInfo tinfo = new LocalTargetInfo(targ);
@@ -78,8 +103,12 @@ namespace AbilityUser
                 }
                 else
                 {
+                    Log.Message("Expected call");
                     targets.Clear();
-                    targets = this.caster.Map.listerThings.AllThings.Where(x => (x.Position.InHorDistOf(caster.Position, this.useAbilityProps.range)) && (x.GetType() == this.useAbilityProps.AoETargetClass) && x.Faction.HostileTo(Faction.OfPlayer)).ToList<Thing>();
+                    targets = this.caster.Map.listerThings.AllThings.Where(x =>
+                        (x.Position.InHorDistOf(aoeStartPosition, useAbilityProps.TargetAoEProperties.range)) &&
+                        (x.GetType() == this.useAbilityProps.TargetAoEProperties.targetClass) &&
+                        (x.HostileTo(Faction.OfPlayer) || this.useAbilityProps.TargetAoEProperties.friendlyFire)).ToList<Thing>();
                 }
 
                 foreach (Thing targ in targets)
@@ -88,6 +117,7 @@ namespace AbilityUser
                     if (this.useAbilityProps.targetParams.CanTarget(tinfo))
                     {
                         TargetsAoE.Add(new LocalTargetInfo(targ));
+                        Log.Message(targ.Label);
                     }
                 }
             }
@@ -98,14 +128,14 @@ namespace AbilityUser
             }
         }
 
-        public virtual void PostCastShot()
+        public virtual void PostCastShot(bool inResult, out bool outResult)
         {
-
+            outResult = inResult;
         }
 
         protected override bool TryCastShot()
         {
-            //     Log.Message("TryCastShot");
+            bool result = false;
             this.TargetsAoE.Clear();
             UpdateTargets();
             int burstshots = this.ShotsPerBurst;
@@ -113,39 +143,25 @@ namespace AbilityUser
             {
                 this.TargetsAoE.RemoveRange(0, TargetsAoE.Count - 1);
             }
-            //         Log.Message("Targeting: " + TargetsAoE.Count.ToString());
             for (int i = 0; i < TargetsAoE.Count; i++)
             {
-                //         Log.Message(TargetsAoE[i].Thing.Label);
                 for (int j = 0; j < burstshots; j++)
                 {
                     bool? attempt = TryLaunchProjectile(this.verbProps.projectileDef, TargetsAoE[i]);
-                    bool? attempt2 = true;
-                    if (this.useAbilityProps.IsDoubleProjectile)
-                    {
-                        attempt2 = TryLaunchProjectile(this.useAbilityProps.doubleProjectile, TargetsAoE[i]);
-                    }
+                    Log.Message(TargetsAoE[i].ToString());
                     if (attempt != null)
                     {
-                        if (attempt == true && attempt2 == true)
-                            return true;
-                        if (attempt == false && attempt2 == true)
-                            return false;
-                        if (attempt == false && attempt2 == false)
-                            return false;
+                        if (attempt == true)
+                            result = true;
+                        if (attempt == false)
+                            result = false;
                     }
                 }
-
-                //abilityUserComp.TicksToCast = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
-                //abilityUserComp.TicksToCastMax = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
                 ability.TicksUntilCasting = (int)this.useAbilityProps.SecondsToRecharge * GenTicks.TicksPerRealSecond;
             }
             this.burstShotsLeft = 0;
-
-            //Hook for modding
-            PostCastShot();
-
-            return true;
+            PostCastShot(result, out result);
+            return result;
         }
 
         protected bool? TryLaunchProjectile(ThingDef projectileDef, LocalTargetInfo launchTarget)
@@ -157,7 +173,8 @@ namespace AbilityUser
                 return false;
             }
             Vector3 drawPos = this.caster.DrawPos;
-            Projectile projectile = (Projectile)GenSpawn.Spawn(projectileDef, shootLine.Source, this.caster.Map);
+            Projectile_AbilityBase projectile = (Projectile_AbilityBase)GenSpawn.Spawn(projectileDef, shootLine.Source, this.caster.Map);
+            projectile.extraDamages = useAbilityProps.extraDamages;
             projectile.FreeIntercept = (this.canFreeInterceptNow && !projectile.def.projectile.flyOverhead);
             ShotReport shotReport = ShotReport.HitReportFor(this.caster, this, launchTarget);
             if (!this.useAbilityProps.AlwaysHits)
@@ -214,7 +231,7 @@ namespace AbilityUser
 
                 if (this.useAbilityProps.DrawProjectileOnTarget)
                 {
-                    Projectile_Ability wprojectile = projectile as Projectile_Ability;
+                    Projectile_AbilityBase wprojectile = projectile as Projectile_AbilityBase;
                     if (wprojectile != null)
                     {
                         //                      Log.Message("Launched Warpprojectile");
@@ -233,7 +250,7 @@ namespace AbilityUser
             {
                 if (this.useAbilityProps.DrawProjectileOnTarget)
                 {
-                    Projectile_Ability wprojectile = projectile as Projectile_Ability;
+                    Projectile_AbilityBase wprojectile = projectile as Projectile_AbilityBase;
                     wprojectile.targetVec = shootLine.Dest.ToVector3();
                     wprojectile.Launch(this.caster, drawPos, launchTarget);
                 }

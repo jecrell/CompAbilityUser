@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using Harmony;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,7 +34,31 @@ namespace AbilityUser
 
         public override void ProcessInput(Event ev)
         {
-            base.ProcessInput(ev);
+            Action<LocalTargetInfo> actionToInput = delegate(LocalTargetInfo x)
+            {
+                this.action(x.Thing);
+            };
+
+            if (this.CurActivateSound != null)
+            {
+                this.CurActivateSound.PlayOneShotOnCamera();
+            }
+            SoundDefOf.TickTiny.PlayOneShotOnCamera();
+            Targeter targeter = Find.Targeter;
+            if (this.verb.CasterIsPawn && targeter.targetingVerb != null && targeter.targetingVerb.verbProps == this.verb.verbProps)
+            {
+                Pawn casterPawn = this.verb.CasterPawn;
+                if (!targeter.IsPawnTargeting(casterPawn))
+                {
+                    targeter.targetingVerbAdditionalPawns.Add(casterPawn);
+                }
+            }
+            else
+            {
+                Find.Targeter.BeginTargeting(this.verb);
+                //AccessTools.Field(typeof(Targeter), "action").SetValue(Find.Targeter, new Action<LocalTargetInfo>((LocalTargetInfo x) =>
+                //this.action(x.Thing)));
+            }
         }
 
         public override GizmoResult GizmoOnGUI(Vector2 topLeft)

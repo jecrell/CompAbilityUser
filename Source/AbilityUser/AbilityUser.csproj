@@ -53,15 +53,19 @@
   <ItemGroup>
     <Compile Include="AbilityDef.cs" />
     <Compile Include="AbilityDefOf.cs" />
+    <Compile Include="AoEProperties.cs" />
     <Compile Include="Command_PawnAbility.cs" />
     <Compile Include="CompAbilityUser.cs" />
     <Compile Include="CompProperties_AbilityUser.cs" />
+    <Compile Include="ExtraDamage.cs" />
+    <Compile Include="HarmonyPatches.cs" />
     <Compile Include="JobDriver_CastAbilitySelf.cs" />
     <Compile Include="JobDriver_CastAbilityVerb.cs" />
     <Compile Include="PawnAbility.cs" />
     <Compile Include="PawnAbilityTargetCategory.cs" />
     <Compile Include="ProjectileDef_Ability.cs" />
     <Compile Include="Projectile_Ability.cs" />
+    <Compile Include="Projectile_AbilityBase.cs" />
     <Compile Include="Projectile_AbilityLaser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ThingDef_LaserProjectile.cs" />

@@ -17,10 +17,6 @@ namespace AbilityUser
                 return this.pawn.TryGetComp<CompAbilityUser>();
             }
         }
-        public override void ExposeData()
-        {
-            base.ExposeData();
-        }
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
