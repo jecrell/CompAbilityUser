@@ -91,6 +91,7 @@ namespace AbilityUser
 
         protected override void Impact(Thing hitThing)
         {
+            base.Impact(hitThing);
             Impact_Override(hitThing);
             if (extraDamages != null && extraDamages.Count > 0)
             {

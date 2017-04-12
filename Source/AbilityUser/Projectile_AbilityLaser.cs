@@ -267,7 +267,7 @@ namespace AbilityUser
                 int damageAmountBase = this.def.projectile.damageAmountBase;
                 DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
                 hitThing.TakeDamage(dinfo);
-                hitThing.TakeDamage(dinfo);
+                //hitThing.TakeDamage(dinfo);
                 if (this.canStartFire && Rand.Range(0f, 1f) > startFireChance)
                 {
                     hitThing.TryAttachFire(0.05f);

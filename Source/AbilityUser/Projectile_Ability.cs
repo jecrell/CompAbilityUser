@@ -72,7 +72,6 @@ namespace AbilityUser
             base.Comps_PostDraw();
         }
 
-
         public override void Impact_Override(Thing hitThing)
         {
             //base.Impact(hitThing);
