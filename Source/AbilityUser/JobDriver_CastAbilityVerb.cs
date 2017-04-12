@@ -22,9 +22,10 @@ namespace AbilityUser
         {
 
             yield return Toils_Misc.ThrowColonistAttackingMote(TargetIndex.A);
+
+            Verb_UseAbility verb = pawn.CurJob.verbToUse as Verb_UseAbility;
             Toil getInRangeToil = Toils_Combat.GotoCastPosition(TargetIndex.A, false);
             yield return getInRangeToil;
-            Verb_UseAbility verb = pawn.CurJob.verbToUse as Verb_UseAbility;
 
             Find.Targeter.targetingVerb = verb;
             yield return Toils_Combat.CastVerb(TargetIndex.A, false);
