@@ -12,5 +12,4 @@ C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Source\Ab
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Source\AbilityUser\obj\Debug\AbilityUser.dll
 C:\Program Files (x86)\Steam\steamapps\common\RimWorld\CompAbilityUser\Assemblies\AbilityUser.dll
 D:\SteamLibrary\steamapps\common\RimWorld\CompAbilityUser\Assemblies\AbilityUser.dll
-D:\SteamLibrary\steamapps\common\RimWorld\CompAbilityUser\Source\AbilityUser\obj\Debug\AbilityUser.csprojResolveAssemblyReference.cache
 D:\SteamLibrary\steamapps\common\RimWorld\CompAbilityUser\Source\AbilityUser\obj\Debug\AbilityUser.dll

@@ -41,7 +41,12 @@ namespace AbilityUser
         {
             get
             {
-                return (ProjectileDef_Ability)def;
+                ProjectileDef_Ability mpdef = null;
+                if (def is ProjectileDef_Ability)
+                {
+                    mpdef = def as ProjectileDef_Ability;
+                }
+                return mpdef;
             }
         }
 
@@ -70,74 +75,68 @@ namespace AbilityUser
 
         public override void Impact_Override(Thing hitThing)
         {
-            base.Impact(hitThing);
+            //base.Impact(hitThing);
             if (hitThing != null)
             {
 
                 Pawn victim = hitThing as Pawn;
                 if (victim != null)
                 {
-                    if (mpdef.IsMentalStateGiver)
+                    if (mpdef != null)
                     {
-                        string str = "MentalStateByPsyker".Translate(new object[]
-                         {
+                        if (mpdef.IsMentalStateGiver)
+                        {
+                            string str = "MentalStateByPsyker".Translate(new object[]
+                             {
                             victim.NameStringShort,
-                         });
-                        if (mpdef.InducesMentalState == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
-                        {
-                            if (CanOverpower(this.Caster, victim))
+                             });
+                            if (mpdef.InducesMentalState == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
                             {
-                                victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
+                                if (CanOverpower(this.Caster, victim))
+                                {
+                                    victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
+                                }
+                            }
+                            else
+                            {
+                                if (CanOverpower(this.Caster, victim))
+                                {
+                                    victim.mindState.mentalStateHandler.TryStartMentalState(mpdef.InducesMentalState, str, true);
+                                }
                             }
                         }
-                        else
+                        //else if (mpdef.IsBuffGiver && victim.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel != PsykerPowerLevel.Omega)
+                        else if (mpdef.IsBuffGiver)
                         {
-                            if (CanOverpower(this.Caster, victim))
+                            if (mpdef.BuffDef.isBad)
                             {
-                                victim.mindState.mentalStateHandler.TryStartMentalState(mpdef.InducesMentalState, str, true);
+                                if (CanOverpower(this.Caster, victim))
+                                {
+                                    victim.health.AddHediff(mpdef.BuffDef);
+                                }
                             }
-                        }
-                    }
-                    //else if (mpdef.IsBuffGiver && victim.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel != PsykerPowerLevel.Omega)
-                    else if (mpdef.IsBuffGiver)
-                    {
-                        if (mpdef.BuffDef.isBad)
-                        {
-                            if (CanOverpower(this.Caster, victim))
+                            else
                             {
                                 victim.health.AddHediff(mpdef.BuffDef);
                             }
                         }
-                        else
-                        {
-                            victim.health.AddHediff(mpdef.BuffDef);
-                        }
                     }
-                    else if (mpdef.IsHealer)
-                    {
-                        List<Hediff> list = victim.health.hediffSet.hediffs.Where(x => x.def != HediffDefOf.PsychicShock).ToList<Hediff>();
-                        if (Rand.Range(0f, 1f) > this.mpdef.HealFailChance && victim.health.hediffSet.hediffs.Count > 0)
-                            for (int i = 0; i < mpdef.HealCapacity + 1; i++)
-                            {
-                                Hediff hediff = list.RandomElement();
-                                if (!IsInIgnoreHediffList(hediff))
-                                   hediff.Heal(this.def.projectile.damageAmountBase);
-                            }
-                    }
-                    else
-                    {
-                        int damageAmountBase = this.def.projectile.damageAmountBase;
-                        ThingDef equipmentDef = this.equipmentDef;
-                        DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
-                        hitThing.TakeDamage(dinfo);
-                        
-                    }
+                    int damageAmountBase = this.def.projectile.damageAmountBase;
+                    ThingDef equipmentDef = this.equipmentDef;
+                    DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
+                    hitThing.TakeDamage(dinfo);
+                    PostImpactEffects(hitThing);
                 }
             }
             else
             {
-                SoundDefOf.PowerOffSmall.PlayOneShotOnCamera();
+                //SoundDefOf.PowerOffSmall.PlayOneShotOnCamera();
             }
+        }
+
+        public virtual void PostImpactEffects(Thing hitThing)
+        {
+
         }
 
         public virtual bool IsInIgnoreHediffList(Hediff hediff)
