@@ -37,19 +37,6 @@ namespace AbilityUser
             }
         }
 
-        public ProjectileDef_Ability mpdef
-        {
-            get
-            {
-                ProjectileDef_Ability mpdef = null;
-                if (def is ProjectileDef_Ability)
-                {
-                    mpdef = def as ProjectileDef_Ability;
-                }
-                return mpdef;
-            }
-        }
-
         public override void Draw()
         {
             if (selectedTarget != null || targetVec != null)
@@ -74,62 +61,14 @@ namespace AbilityUser
 
         public override void Impact_Override(Thing hitThing)
         {
-            //base.Impact(hitThing);
             if (hitThing != null)
             {
-
-                Pawn victim = hitThing as Pawn;
-                if (victim != null)
-                {
-                    if (mpdef != null)
-                    {
-                        if (mpdef.IsMentalStateGiver)
-                        {
-                            string str = "MentalStateByPsyker".Translate(new object[]
-                             {
-                            victim.NameStringShort,
-                             });
-                            if (mpdef.InducesMentalState == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
-                            {
-                                if (CanOverpower(this.Caster, victim))
-                                {
-                                    victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
-                                }
-                            }
-                            else
-                            {
-                                if (CanOverpower(this.Caster, victim))
-                                {
-                                    victim.mindState.mentalStateHandler.TryStartMentalState(mpdef.InducesMentalState, str, true);
-                                }
-                            }
-                        }
-                        //else if (mpdef.IsBuffGiver && victim.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel != PsykerPowerLevel.Omega)
-                        else if (mpdef.IsBuffGiver)
-                        {
-                            if (mpdef.BuffDef.isBad)
-                            {
-                                if (CanOverpower(this.Caster, victim))
-                                {
-                                    victim.health.AddHediff(mpdef.BuffDef);
-                                }
-                            }
-                            else
-                            {
-                                victim.health.AddHediff(mpdef.BuffDef);
-                            }
-                        }
-                    }
+                base.Impact_Override(hitThing);
                     int damageAmountBase = this.def.projectile.damageAmountBase;
                     ThingDef equipmentDef = this.equipmentDef;
                     DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
                     hitThing.TakeDamage(dinfo);
                     PostImpactEffects(hitThing);
-                }
-            }
-            else
-            {
-                //SoundDefOf.PowerOffSmall.PlayOneShotOnCamera();
             }
         }
 
@@ -157,9 +96,5 @@ namespace AbilityUser
             return false;
         }
 
-        public virtual bool CanOverpower(Pawn caster, Thing hitThing)
-        {
-            return true;
-        }
     }
 }

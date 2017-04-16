@@ -12,7 +12,6 @@ namespace AbilityUser
     //public class PawnAbility : ThingWithComps
     public class PawnAbility : IExposable
     {
-        
         public Pawn pawn;
         private List<ThingComp> comps = new List<ThingComp>();
         public AbilityDef powerdef;

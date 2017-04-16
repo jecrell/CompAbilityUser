@@ -9,7 +9,7 @@ using RimWorld;
 
 namespace AbilityUser
 {
-    public class ThingDef_LaserProjectile : ThingDef
+    public class ProjectileDef_AbilityLaser : ProjectileDef_Ability
     {
         public float preFiringInitialIntensity = 0f;
         public float preFiringFinalIntensity = 0f;

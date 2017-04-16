@@ -14,6 +14,10 @@ namespace AbilityUser
         public bool DrawProjectileOnTarget = true;
 
         public AbilityDef abilityDef;
+        
+        public List<ApplyHediffs> hediffsToApply = null;
+
+        public List<ApplyMentalStates> mentalStatesToApply = null;
 
         public bool AlwaysHits = true;
 

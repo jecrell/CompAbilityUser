@@ -45,7 +45,7 @@ namespace AbilityUser
         /// </summary>
         public void GetParametersFromXml()
         {
-            ThingDef_LaserProjectile additionalParameters = def as ThingDef_LaserProjectile;
+            ProjectileDef_AbilityLaser additionalParameters = def as ProjectileDef_AbilityLaser;
 
             preFiringDuration = additionalParameters.preFiringDuration;
             postFiringDuration = additionalParameters.postFiringDuration;
@@ -264,6 +264,7 @@ namespace AbilityUser
         {
             if (hitThing != null)
             {
+                base.Impact_Override(hitThing);
                 int damageAmountBase = this.def.projectile.damageAmountBase;
                 DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
                 hitThing.TakeDamage(dinfo);

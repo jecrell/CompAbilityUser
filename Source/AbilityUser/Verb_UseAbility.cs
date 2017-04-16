@@ -195,7 +195,7 @@ namespace AbilityUser
                         projectile.InterceptWalls = true;
                     }
                     //              Log.Message("LaunchingIntoWild");
-                    projectile.Launch(this.caster, drawPos, shootLine.Dest, this.ownerEquipment);
+                    projectile.Launch(this.caster, drawPos, shootLine.Dest, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
                     return true;
                 }
                 if (Rand.Value > shotReport.ChanceToNotHitCover)
@@ -212,7 +212,7 @@ namespace AbilityUser
                             projectile.InterceptWalls = true;
                         }
                         //            Log.Message("LaunchingINtoCover");
-                        projectile.Launch(this.caster, drawPos, randomCoverToMissInto, this.ownerEquipment);
+                        projectile.Launch(this.caster, drawPos, randomCoverToMissInto, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
                         return true;
                     }
                 }
@@ -237,13 +237,13 @@ namespace AbilityUser
                         //                      Log.Message("Launched Warpprojectile");
                         wprojectile.selectedTarget = launchTarget.Thing;
                         wprojectile.Caster = this.CasterPawn;
-                        wprojectile.Launch(this.caster, drawPos, launchTarget);
+                        wprojectile.Launch(this.caster, drawPos, launchTarget, null, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
                     }
                 }
                 else
                 {
                     //              Log.Message("Launched Projectile");
-                    projectile.Launch(this.caster, drawPos, launchTarget);
+                    projectile.Launch(this.caster, drawPos, launchTarget, null, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
                 }
             }
             else
