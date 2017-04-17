@@ -153,9 +153,9 @@ namespace AbilityUser
                                 }
                             }
                             if (success)
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "Success".Translate());
+                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "CastSuccess".Translate(), 12f);
                             else
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "Failed".Translate());
+                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "CastFailure".Translate(), 12f);
                         }
                     }
                     //else if (mpdef.IsBuffGiver && victim.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel != PsykerPowerLevel.Omega)

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Verse;
-
+using Verse.Sound;
 
 namespace AbilityUser
 {
@@ -177,6 +177,14 @@ namespace AbilityUser
             projectile.extraDamages = useAbilityProps.extraDamages;
             projectile.FreeIntercept = (this.canFreeInterceptNow && !projectile.def.projectile.flyOverhead);
             ShotReport shotReport = ShotReport.HitReportFor(this.caster, this, launchTarget);
+            if (this.verbProps.soundCast != null)
+            {
+                this.verbProps.soundCast.PlayOneShot(new TargetInfo(this.caster.Position, this.caster.Map, false));
+            }
+            if (this.verbProps.soundCastTail != null)
+            {
+                this.verbProps.soundCastTail.PlayOneShotOnCamera();
+            }
             if (!this.useAbilityProps.AlwaysHits)
             {
                 if (Rand.Value > shotReport.ChanceToNotGoWild_IgnoringPosture)
