@@ -153,10 +153,6 @@ namespace AbilityUser
         }
 
         #region virtual
-        public virtual string PostAbilityVerbDesc(Verb_UseAbility verb)
-        {
-            return "";
-        }
 
         public virtual void PostInitialize() { }
 
@@ -230,16 +226,7 @@ namespace AbilityUser
             //       Log.Message(this.PawnAbilitys.Count.ToString());
         }
 
-        public string GetCooldown(Verb_UseAbility verb)
-        {
-            string result = "";
-            VerbProperties_Ability def = verb.useAbilityProps;
-            if (def != null)
-            {
-                result = "Cooldown: " + def.SecondsToRecharge.ToString("N0") + " seconds";
-            }
-            return result;
-        }
+
 
         public IEnumerable<Command_PawnAbility> GetPawnAbilityVerbs()
         {
@@ -259,13 +246,12 @@ namespace AbilityUser
                 command_CastPower.defaultLabel = allPowers[j].powerdef.LabelCap;
 
 
-                string coolDesc = GetCooldown(newVerb);
-                string postDesc = PostAbilityVerbDesc(newVerb);
-                StringBuilder desc = new StringBuilder();
-                desc.AppendLine(allPowers[j].powerdef.description);
-                if (coolDesc != "") desc.AppendLine(coolDesc);
-                if (postDesc != "") desc.AppendLine(postDesc);
-                command_CastPower.defaultDesc = desc.ToString();
+                //GetDesc
+                StringBuilder s = new StringBuilder();
+                s.AppendLine(allPowers[j].GetDescription());
+                s.AppendLine(PostAbilityVerbCompDesc(newVerb));
+                command_CastPower.defaultDesc = s.ToString();
+                s = null;
 
 
                 command_CastPower.targetingParams = allPowers[j].powerdef.MainVerb.targetParams;
@@ -317,7 +303,7 @@ namespace AbilityUser
                     }
                     else if (!newVerb.ability.CanFire)
                     {
-                        command_CastPower.Disable("PawnAbilityRecharging".Translate(new object[]
+                        command_CastPower.Disable("AU_PawnAbilityRecharging".Translate(new object[]
                             {
                                 newVerb.CasterPawn.NameStringShort
                             }));
@@ -335,6 +321,11 @@ namespace AbilityUser
             }
             temp = null;
             yield break;
+        }
+
+        public virtual string PostAbilityVerbCompDesc(Verb_UseAbility verb)
+        {
+            return "";
         }
 
 

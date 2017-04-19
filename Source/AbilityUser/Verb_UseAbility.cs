@@ -67,7 +67,7 @@ namespace AbilityUser
             this.TargetsAoE.Clear();
             if (this.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetAoE)
             {
-                Log.Message("AoE Called");
+                //Log.Message("AoE Called");
                 if (useAbilityProps.TargetAoEProperties == null)
                 {
                     Log.Error("Tried to Cast AoE-Ability without defining a target class");
@@ -76,7 +76,6 @@ namespace AbilityUser
                 List<Thing> targets = new List<Thing>();
 
                 //Handle TargetAoE start location.
-
                 IntVec3 aoeStartPosition = this.caster.PositionHeld;
                 if (!useAbilityProps.TargetAoEProperties.startsFromCaster)
                 {
@@ -103,7 +102,7 @@ namespace AbilityUser
                 }
                 else
                 {
-                    Log.Message("Expected call");
+                    //Log.Message("Expected call");
                     targets.Clear();
                     targets = this.caster.Map.listerThings.AllThings.Where(x =>
                         (x.Position.InHorDistOf(aoeStartPosition, useAbilityProps.TargetAoEProperties.range)) &&
@@ -111,11 +110,13 @@ namespace AbilityUser
                         (x.HostileTo(Faction.OfPlayer) || this.useAbilityProps.TargetAoEProperties.friendlyFire)).ToList<Thing>();
                 }
 
-                foreach (Thing targ in targets)
+                int maxTargets = this.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.maxTargets;
+                foreach (Thing targ in targets.InRandomOrder<Thing>())
                 {
                     TargetInfo tinfo = new TargetInfo(targ);
-                    if (this.useAbilityProps.targetParams.CanTarget(tinfo))
+                    if (this.useAbilityProps.targetParams.CanTarget(tinfo) && maxTargets > 0)
                     {
+                        maxTargets--;
                         TargetsAoE.Add(new LocalTargetInfo(targ));
                         Log.Message(targ.Label);
                     }

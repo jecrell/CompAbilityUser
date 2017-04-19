@@ -125,7 +125,7 @@ namespace AbilityUser
             }
             catch
             {
-                this.Destroy(DestroyMode.Vanish);
+                if (!this.Destroyed) this.Destroy(DestroyMode.Vanish);
             }
 
         }

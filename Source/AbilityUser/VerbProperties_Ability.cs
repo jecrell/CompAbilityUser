@@ -31,6 +31,11 @@ namespace AbilityUser
         public AbilityTargetCategory AbilityTargetCategory = AbilityTargetCategory.TargetThing;
         public TargetAoEProperties TargetAoEProperties = null;
 
+        public bool tooltipShowProjectileDamage = true;
+        public bool tooltipShowExtraDamages = true;
+        public bool tooltipShowHediffsToApply = true;
+        public bool tooltipShowMentalStatesToApply = true;
+
         public bool ReplacesStandardAttack;
 
         public List<StatModifier> statModifiers = null;

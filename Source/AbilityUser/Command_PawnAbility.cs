@@ -119,7 +119,7 @@ namespace AbilityUser
                 TipSignal tip = this.Desc;
                 if (this.disabled && !this.disabledReason.NullOrEmpty())
                 {
-                    tip.text = tip.text + "\n" + "DISABLED".Translate() + ": " + this.disabledReason;
+                    tip.text = tip.text + "\n" + "AU_DISABLED".Translate() + ": " + this.disabledReason;
                 }
                 TooltipHandler.TipRegion(rect, tip);
             }
