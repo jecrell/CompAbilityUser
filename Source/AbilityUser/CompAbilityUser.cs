@@ -248,7 +248,7 @@ namespace AbilityUser
 
                 //GetDesc
                 StringBuilder s = new StringBuilder();
-                s.AppendLine(allPowers[j].GetDescription());
+                s.AppendLine(allPowers[j].powerdef.GetDescription());
                 s.AppendLine(PostAbilityVerbCompDesc(newVerb));
                 command_CastPower.defaultDesc = s.ToString();
                 s = null;
