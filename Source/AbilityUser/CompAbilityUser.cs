@@ -249,7 +249,7 @@ namespace AbilityUser
                 //GetDesc
                 StringBuilder s = new StringBuilder();
                 s.AppendLine(allPowers[j].powerdef.GetDescription());
-                s.AppendLine(PostAbilityVerbCompDesc(newVerb));
+                s.AppendLine(PostAbilityVerbCompDesc(newVerb.useAbilityProps));
                 command_CastPower.defaultDesc = s.ToString();
                 s = null;
 
@@ -267,10 +267,10 @@ namespace AbilityUser
                 //}
                 command_CastPower.icon = allPowers[j].powerdef.uiIcon;
                 string str;
-                if (FloatMenuUtility.GetAttackAction(this.abilityUser, LocalTargetInfo.Invalid, out str) == null)
-                {
-                    command_CastPower.Disable(str.CapitalizeFirst() + ".");
-                }
+                //if (FloatMenuUtility.GetAttackAction(this.abilityUser, LocalTargetInfo.Invalid, out str) == null)
+                //{
+                //    command_CastPower.Disable(str.CapitalizeFirst() + ".");
+                //}
                 command_CastPower.action = delegate (Thing target)
                 {
                     Action attackAction = CompAbilityUser.TryCastAbility(abilityUser, target, this, newVerb, allPowers[j].powerdef as AbilityDef);
@@ -287,7 +287,7 @@ namespace AbilityUser
                 string reason = "";
                 if (newVerb.CasterIsPawn)
                 {
-                    if (newVerb.CasterPawn.story.DisabledWorkTags.Contains(WorkTags.Violent) && newVerbProps.isViolent)
+                    if (newVerb.CasterPawn.story.DisabledWorkTags.Contains(WorkTags.Violent) && allPowers[j].powerdef.MainVerb.isViolent)
                     {
                         command_CastPower.Disable("IsIncapableOfViolence".Translate(new object[]
                         {
@@ -323,7 +323,7 @@ namespace AbilityUser
             yield break;
         }
 
-        public virtual string PostAbilityVerbCompDesc(Verb_UseAbility verb)
+        public virtual string PostAbilityVerbCompDesc(VerbProperties_Ability verbDef)
         {
             return "";
         }
@@ -363,22 +363,32 @@ namespace AbilityUser
                 compAbilityUser.curVerb = verb;
                 compAbilityUser.curPower = psydef;
                 compAbilityUser.curRotation = Rot4.South;
-                if (target.Thing != null)
+                if (target != null && target.Thing != null)
                 {
                     compAbilityUser.curRotation = target.Thing.Rotation;
                 }
 
-                Job job = CompAbilityUser.AbilityJob(verb.useAbilityProps.AbilityTargetCategory, target);
+                Job job;
+                if (target != null) job = CompAbilityUser.AbilityJob(verb.useAbilityProps.AbilityTargetCategory, target);
+                else job = CompAbilityUser.AbilityJob(verb.useAbilityProps.AbilityTargetCategory, pawn);
                 job.playerForced = true;
                 job.verbToUse = verb;
-                Pawn pawn2 = target.Thing as Pawn;
-                if (pawn2 != null)
+                if (target != null)
                 {
-                    job.killIncappedTarget = pawn2.Downed;
+                    Pawn pawn2 = target.Thing as Pawn;
+                    if (pawn2 != null)
+                    {
+                        job.killIncappedTarget = pawn2.Downed;
+                    }
                 }
                 pawn.jobs.TryTakeOrderedJob(job);
             });
             return act;
+        }
+
+        public  virtual void PostAbilityAttempt(Pawn caster, AbilityDef ability)
+        {
+            return;
         }
 
  

@@ -118,7 +118,7 @@ namespace AbilityUser
                     {
                         maxTargets--;
                         TargetsAoE.Add(new LocalTargetInfo(targ));
-                        Log.Message(targ.Label);
+                        //Log.Message(targ.Label);
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace AbilityUser
                 for (int j = 0; j < burstshots; j++)
                 {
                     bool? attempt = TryLaunchProjectile(this.verbProps.projectileDef, TargetsAoE[i]);
-                    Log.Message(TargetsAoE[i].ToString());
+                    //Log.Message(TargetsAoE[i].ToString());
                     if (attempt != null)
                     {
                         if (attempt == true)

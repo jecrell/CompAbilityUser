@@ -352,8 +352,8 @@ namespace AbilityUser
             yield return Toils_Misc.ThrowColonistAttackingMote(TargetIndex.A);
 
             Verb_UseAbility verb = pawn.CurJob.verbToUse as Verb_UseAbility;
-            Toil getInRangeToil = GotoCastPosition(TargetIndex.A, false);
-            yield return getInRangeToil;
+            //Toil getInRangeToil = GotoCastPosition(TargetIndex.A, false);
+            //yield return getInRangeToil;
 
             Find.Targeter.targetingVerb = verb;
             yield return Toils_Combat.CastVerb(TargetIndex.A, false);
@@ -365,7 +365,7 @@ namespace AbilityUser
 
                 //}
                 //compAbilityUser.IsActive = false;
-                compAbilityUser.ShotFired = true;
+                compAbilityUser.PostAbilityAttempt(pawn, verb.ability.powerdef);
             });
         }
     }

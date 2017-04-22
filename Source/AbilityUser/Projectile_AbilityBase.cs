@@ -106,80 +106,97 @@ namespace AbilityUser
             return true;
         }
 
-        public virtual void Impact_Override(Thing hitThing)
+        public void ApplyHediffsAndMentalStates(Pawn victim)
         {
-            //base.Impact(hitThing);
-            Pawn victim = hitThing as Pawn;
-            if (victim != null)
+            //Log.Message("2");
+            if (localApplyMentalStates != null)
             {
-
-                //Log.Message("1");
-                if (mpdef != null)
+                if (localApplyMentalStates.Count > 0)
                 {
 
-                    //Log.Message("2");
-                    if (localApplyMentalStates != null && localApplyMentalStates.Count > 0)
+                    //Log.Message("3");
+                    foreach (ApplyMentalStates mentalStateGiver in localApplyMentalStates)
                     {
-
-                        //Log.Message("3");
-                        foreach (ApplyMentalStates mentalStateGiver in localApplyMentalStates)
+                        //Log.Message("4");
+                        bool success = false;
+                        float checkValue = Rand.Value;
+                        //Log.Message(checkValue.ToString());
+                        //Log.Message(mentalStateGiver.applyChance.ToString());
+                        if (checkValue <= mentalStateGiver.applyChance)
                         {
-                            //Log.Message("4");
-                            bool success = false;
-                            float checkValue = Rand.Value;
-                            Log.Message(checkValue.ToString());
-                            Log.Message(mentalStateGiver.applyChance.ToString());
-                            if (checkValue <= mentalStateGiver.applyChance)
-                            {
-                                string str = "MentalStateByPsyker".Translate(new object[]
-                                 {
+                            string str = "MentalStateByPsyker".Translate(new object[]
+                             {
                             victim.NameStringShort,
-                                 });
-                                if (mentalStateGiver.mentalStateDef == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
-                                {
-                                    if (CanOverpower(this.Caster, victim))
-                                    {
-                                        success = true;
-                                        victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
-                                    }
-                                }
-                                else
-                                {
-                                    if (CanOverpower(this.Caster, victim))
-                                    {
-                                        success = true;
-                                        victim.mindState.mentalStateHandler.TryStartMentalState(mentalStateGiver.mentalStateDef, str, true);
-                                    }
-                                }
-                            }
-                            if (success)
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "CastSuccess".Translate(), 12f);
-                            else
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "CastFailure".Translate(), 12f);
-                        }
-                    }
-                    //else if (mpdef.IsBuffGiver && victim.needs.TryGetNeed<Need_Soul>().PsykerPowerLevel != PsykerPowerLevel.Omega)
-                    if (localApplyHediffs != null && localApplyHediffs.Count > 0)
-                    {
-                        foreach (ApplyHediffs hediffs in localApplyHediffs)
-                        {
-                            bool success = false;
-                            if (Rand.Value <= hediffs.applyChance)
+                             });
+                            if (mentalStateGiver.mentalStateDef == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
                             {
-                                if (CanOverpower(this.Caster, victim))
+                                if (Caster == victim || CanOverpower(Caster, victim))
                                 {
-                                    victim.health.AddHediff(hediffs.hediffDef);
                                     success = true;
+                                    victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
                                 }
                             }
-                            if (success)
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "Success".Translate());
                             else
-                                MoteMaker.ThrowText(this.Caster.PositionHeld.ToVector3(), this.Caster.MapHeld, "Failed".Translate());
+                            {
+                                if (Caster == victim || CanOverpower(Caster, victim))
+                                {
+                                    success = true;
+                                    victim.mindState.mentalStateHandler.TryStartMentalState(mentalStateGiver.mentalStateDef, str, true);
+                                }
+                            }
                         }
+                        if (success)
+                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate(), 12f);
+                        else
+                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate(), 12f);
                     }
                 }
             }
+            if (localApplyHediffs != null)
+            {
+                if (localApplyHediffs.Count > 0)
+                {
+                    foreach (ApplyHediffs hediffs in localApplyHediffs)
+                    {
+                        bool success = false;
+                        if (Rand.Value <= hediffs.applyChance)
+                        {
+                            if (victim == Caster || CanOverpower(Caster, victim))
+                            {
+                                Hediff newHediff = HediffMaker.MakeHediff(hediffs.hediffDef, victim, null);
+                                victim.health.AddHediff(newHediff, null, null);
+                                newHediff.Severity = hediffs.severity;
+                                success = true;
+                            }
+                        }
+                        if (success)
+                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate());
+                        else
+                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate());
+                    }
+                }
+            }
+        }
+
+        public virtual void Impact_Override(Thing hitThing)
+        {
+            //base.Impact(hitThing);
+            if (hitThing != null)
+            {
+                Pawn victim = hitThing as Pawn;
+                if (victim != null)
+                {
+
+                    //Log.Message("1");
+                    if (mpdef != null)
+                    {
+                        ApplyHediffsAndMentalStates(victim);
+                        return;
+                    }
+                }
+
+            }
+            ApplyHediffsAndMentalStates(Caster);
         }
 
         // Verse.Projectile

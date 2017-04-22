@@ -144,7 +144,17 @@ namespace AbilityUser
                             s.AppendLine("AU_EffectChance".Translate());
                             foreach (ApplyHediffs hediff in def.hediffsToApply)
                             {
-                                s.AppendLine("\t" + hediff.hediffDef.LabelCap + " " + hediff.applyChance.ToStringPercent());
+                                float duration = 0;
+                                if (hediff.hediffDef.comps != null)
+                                {
+                                    if (hediff.hediffDef.HasComp(typeof(HediffComp_Disappears)))
+                                    {
+                                        int intDuration = ((HediffCompProperties_Disappears)hediff.hediffDef.CompPropsFor(typeof(HediffComp_Disappears))).disappearsAfterTicks.max;
+                                        duration = GenTicks.TicksToSeconds(intDuration);
+                                    }
+                                }
+                                if (duration == 0) s.AppendLine("\t" + hediff.hediffDef.LabelCap + " " + hediff.applyChance.ToStringPercent());
+                                else s.AppendLine("\t" + hediff.hediffDef.LabelCap + " " + hediff.applyChance.ToStringPercent() + " " + duration + " " + "SecondsToLower".Translate());
                             }
 
                         }
