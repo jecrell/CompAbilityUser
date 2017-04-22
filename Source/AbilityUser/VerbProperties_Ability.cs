@@ -14,7 +14,9 @@ namespace AbilityUser
         public bool DrawProjectileOnTarget = true;
 
         public AbilityDef abilityDef;
-        
+
+        public List<SpawnThings> thingsToSpawn = null;
+
         public List<ApplyHediffs> hediffsToApply = null;
 
         public List<ApplyMentalStates> mentalStatesToApply = null;

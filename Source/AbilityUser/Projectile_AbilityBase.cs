@@ -14,6 +14,7 @@ namespace AbilityUser
         public List<ExtraDamage> extraDamages = null;
         public List<ApplyHediffs> localApplyHediffs = null;
         public List<ApplyMentalStates> localApplyMentalStates = null;
+        public List<SpawnThings> localSpawnThings = null;
 
         public Vector3 targetVec;
         public Pawn Caster;
@@ -108,20 +109,14 @@ namespace AbilityUser
 
         public void ApplyHediffsAndMentalStates(Pawn victim)
         {
-            //Log.Message("2");
             if (localApplyMentalStates != null)
             {
                 if (localApplyMentalStates.Count > 0)
                 {
-
-                    //Log.Message("3");
                     foreach (ApplyMentalStates mentalStateGiver in localApplyMentalStates)
                     {
-                        //Log.Message("4");
                         bool success = false;
                         float checkValue = Rand.Value;
-                        //Log.Message(checkValue.ToString());
-                        //Log.Message(mentalStateGiver.applyChance.ToString());
                         if (checkValue <= mentalStateGiver.applyChance)
                         {
                             string str = "MentalStateByPsyker".Translate(new object[]
@@ -178,16 +173,73 @@ namespace AbilityUser
             }
         }
 
+        public void SingleSpawnLoop(SpawnThings spawnables)
+        {
+            if (spawnables.def != null)
+            {
+                FactionDef factionDefToAssign = FactionDefOf.PlayerColony;
+                if (spawnables.factionDef != null) factionDefToAssign = spawnables.factionDef;
+                Faction factionToAssign = Find.FactionManager.FirstFactionOfDef(factionDefToAssign);
+
+                if (spawnables.def.race != null && spawnables.def.race.Humanlike)
+                {
+                    if (spawnables.kindDef == null) { Log.Error("Missing kinddef"); return; }
+                    Pawn pawn = PawnGenerator.GeneratePawn(spawnables.kindDef, factionToAssign);
+                    foreach (WorkTypeDef current in DefDatabase<WorkTypeDef>.AllDefs)
+                    {
+                        if (!pawn.story.WorkTypeIsDisabled(current))
+                        {
+                            pawn.workSettings.SetPriority(current, 3);
+                        }
+                    }
+                    GenSpawn.Spawn(pawn, this.PositionHeld, this.MapHeld, Rot4.Random);
+                }
+                else if (spawnables.def.race != null && (!spawnables.def.race.Humanlike))
+                {
+                    if (spawnables.kindDef == null) { Log.Error("Missing kinddef"); return; }
+                    GenSpawn.Spawn(PawnGenerator.GeneratePawn(spawnables.kindDef, factionToAssign), this.PositionHeld, this.MapHeld);
+                }
+                else
+                {
+                    ThingDef thingDef = spawnables.def;
+                    ThingDef stuff = null;
+                    if (thingDef.MadeFromStuff)
+                    {
+                        stuff = ThingDefOf.WoodLog;
+                    }
+                    Thing thing = ThingMaker.MakeThing(thingDef, stuff);
+                    thing.SetFaction(factionToAssign, null);
+                    GenSpawn.Spawn(thing, this.PositionHeld, this.MapHeld, Rot4.Random);
+                }
+            }
+
+        }
+
+        public void SpawnSpawnables()
+        {
+            if (localSpawnThings != null && localSpawnThings.Count > 0)
+            {
+                foreach (SpawnThings spawnables in localSpawnThings)
+                {
+                    if (spawnables.spawnCount == 1) SingleSpawnLoop(spawnables);
+                    else
+                    {
+                        for (int i = 0; i < spawnables.spawnCount; i++)
+                        {
+                            SingleSpawnLoop(spawnables);
+                        }
+                    }
+                }
+            }
+        }
+
         public virtual void Impact_Override(Thing hitThing)
         {
-            //base.Impact(hitThing);
             if (hitThing != null)
             {
                 Pawn victim = hitThing as Pawn;
                 if (victim != null)
                 {
-
-                    //Log.Message("1");
                     if (mpdef != null)
                     {
                         ApplyHediffsAndMentalStates(victim);
@@ -197,13 +249,14 @@ namespace AbilityUser
 
             }
             ApplyHediffsAndMentalStates(Caster);
+            SpawnSpawnables();
         }
-
-        // Verse.Projectile
-        public void Launch(Thing launcher, Vector3 origin, LocalTargetInfo targ, Thing equipment = null, List<ApplyHediffs> applyHediffs = null, List<ApplyMentalStates> applyMentalStates = null)
+        
+        public void Launch(Thing launcher, Vector3 origin, LocalTargetInfo targ, Thing equipment = null, List<ApplyHediffs> applyHediffs = null, List<ApplyMentalStates> applyMentalStates = null, List<SpawnThings> spawnThings = null)
         {
             localApplyHediffs = applyHediffs;
             localApplyMentalStates = applyMentalStates;
+            localSpawnThings = spawnThings;
             base.Launch(launcher, origin, targ, equipment);
         }
 

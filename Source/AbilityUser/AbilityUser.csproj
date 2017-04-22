@@ -71,6 +71,7 @@
     <Compile Include="Projectile_AbilityLaser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ProjectileDef_LaserProjectile.cs" />
+    <Compile Include="SpawnThings.cs" />
     <Compile Include="VerbProperties_Ability.cs" />
     <Compile Include="Verb_UseAbility.cs" />
   </ItemGroup>
