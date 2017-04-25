@@ -305,10 +305,10 @@ namespace AbilityUser
                 Thing thing = null;
                 Pawn pawn = null;
                 thing = curJob.GetTarget(targetInd).Thing;
-                if (thing != null) pawn = thing as Pawn;
                 IntVec3 intVec;
                 if (thing != null)
                 {
+                    pawn = thing as Pawn;
                     if (!CastPositionFinder.TryFindCastPosition(new CastPositionRequest
                     {
                         caster = toil.actor,

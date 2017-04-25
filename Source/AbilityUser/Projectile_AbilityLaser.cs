@@ -78,7 +78,7 @@ namespace AbilityUser
         /// </summary>
         public override void Tick()
         {
-            //  Log.Message("Tickng Ma Lazor");
+            //  //Log.Message("Tickng Ma Lazor");
             // Directly call the Projectile base Tick function (we want to completely override the Projectile Tick() function).
             //((ThingWithComponents)this).Tick(); // Does not work...
             try
@@ -262,9 +262,10 @@ namespace AbilityUser
         /// </summary>
         public override void Impact_Override(Thing hitThing)
         {
+
+            base.Impact_Override(hitThing);
             if (hitThing != null)
             {
-                base.Impact_Override(hitThing);
                 int damageAmountBase = this.def.projectile.damageAmountBase;
                 DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
                 hitThing.TakeDamage(dinfo);

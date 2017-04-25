@@ -67,7 +67,7 @@ namespace AbilityUser
             this.TargetsAoE.Clear();
             if (this.useAbilityProps.AbilityTargetCategory == AbilityTargetCategory.TargetAoE)
             {
-                //Log.Message("AoE Called");
+                ////Log.Message("AoE Called");
                 if (useAbilityProps.TargetAoEProperties == null)
                 {
                     Log.Error("Tried to Cast AoE-Ability without defining a target class");
@@ -102,7 +102,7 @@ namespace AbilityUser
                 }
                 else
                 {
-                    //Log.Message("Expected call");
+                    ////Log.Message("Expected call");
                     targets.Clear();
                     targets = this.caster.Map.listerThings.AllThings.Where(x =>
                         (x.Position.InHorDistOf(aoeStartPosition, useAbilityProps.TargetAoEProperties.range)) &&
@@ -118,7 +118,7 @@ namespace AbilityUser
                     {
                         maxTargets--;
                         TargetsAoE.Add(new LocalTargetInfo(targ));
-                        //Log.Message(targ.Label);
+                        ////Log.Message(targ.Label);
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace AbilityUser
                 for (int j = 0; j < burstshots; j++)
                 {
                     bool? attempt = TryLaunchProjectile(this.verbProps.projectileDef, TargetsAoE[i]);
-                    //Log.Message(TargetsAoE[i].ToString());
+                    ////Log.Message(TargetsAoE[i].ToString());
                     if (attempt != null)
                     {
                         if (attempt == true)
@@ -176,10 +176,11 @@ namespace AbilityUser
             Vector3 drawPos = this.caster.DrawPos;
             Projectile_AbilityBase projectile = (Projectile_AbilityBase)GenSpawn.Spawn(projectileDef, shootLine.Source, this.caster.Map);
             projectile.extraDamages = useAbilityProps.extraDamages;
+            projectile.localSpawnThings = useAbilityProps.thingsToSpawn;
             projectile.FreeIntercept = (this.canFreeInterceptNow && !projectile.def.projectile.flyOverhead);
             ShotReport shotReport = ShotReport.HitReportFor(this.caster, this, launchTarget);
             if (this.verbProps.soundCast != null)
-            {
+             {
                 this.verbProps.soundCast.PlayOneShot(new TargetInfo(this.caster.Position, this.caster.Map, false));
             }
             if (this.verbProps.soundCastTail != null)
@@ -203,8 +204,8 @@ namespace AbilityUser
                     {
                         projectile.InterceptWalls = true;
                     }
-                    //              Log.Message("LaunchingIntoWild");
-                    projectile.Launch(this.caster, drawPos, shootLine.Dest, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
+                    //              //Log.Message("LaunchingIntoWild");
+                    projectile.Launch(this.caster, drawPos, shootLine.Dest, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply, this.useAbilityProps.thingsToSpawn);
                     return true;
                 }
                 if (Rand.Value > shotReport.ChanceToNotHitCover)
@@ -220,8 +221,8 @@ namespace AbilityUser
                         {
                             projectile.InterceptWalls = true;
                         }
-                        //            Log.Message("LaunchingINtoCover");
-                        projectile.Launch(this.caster, drawPos, randomCoverToMissInto, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
+                        //            //Log.Message("LaunchingINtoCover");
+                        projectile.Launch(this.caster, drawPos, randomCoverToMissInto, this.ownerEquipment, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply, this.useAbilityProps.thingsToSpawn);
                         return true;
                     }
                 }
@@ -234,40 +235,8 @@ namespace AbilityUser
             {
                 projectile.InterceptWalls = (!launchTarget.HasThing || launchTarget.Thing.def.Fillage == FillCategory.Full);
             }
-            if (launchTarget.Thing != null)
-            {
-                //                Log.Message("Release Shot at: " + launchTarget.Thing.Label);
-
-                if (this.useAbilityProps.DrawProjectileOnTarget)
-                {
-                    Projectile_AbilityBase wprojectile = projectile as Projectile_AbilityBase;
-                    if (wprojectile != null)
-                    {
-                        //                      Log.Message("Launched Warpprojectile");
-                        wprojectile.selectedTarget = launchTarget.Thing;
-                        wprojectile.Caster = this.CasterPawn;
-                        wprojectile.Launch(this.caster, drawPos, launchTarget, null, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
-                    }
-                }
-                else
-                {
-                    //              Log.Message("Launched Projectile");
-                    projectile.Launch(this.caster, drawPos, launchTarget, null, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply);
-                }
-            }
-            else
-            {
-                if (this.useAbilityProps.DrawProjectileOnTarget)
-                {
-                    Projectile_AbilityBase wprojectile = projectile as Projectile_AbilityBase;
-                    wprojectile.targetVec = shootLine.Dest.ToVector3();
-                    wprojectile.Launch(this.caster, drawPos, launchTarget);
-                }
-                //                   Log.Message("LaunchingWild");
-                projectile.Launch(this.caster, drawPos, shootLine.Dest);
-            }
-            return null;
-
+            projectile.Launch(this.caster, drawPos, launchTarget, null, this.useAbilityProps.hediffsToApply, this.useAbilityProps.mentalStatesToApply, this.useAbilityProps.thingsToSpawn);
+            return true;
         }
 
         protected override int ShotsPerBurst

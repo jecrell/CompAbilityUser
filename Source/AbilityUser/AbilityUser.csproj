@@ -51,6 +51,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AbilityButtons.cs" />
     <Compile Include="AbilityDef.cs" />
     <Compile Include="AbilityDefOf.cs" />
     <Compile Include="AoEProperties.cs" />

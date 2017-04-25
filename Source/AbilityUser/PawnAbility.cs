@@ -79,14 +79,14 @@ namespace AbilityUser
 
         //public void InitializePawnComps(Pawn parent)
         //{
-        //    //           Log.Message("Initializng Pawn Comps");
-        //    //           Log.Message(parent.ToString());
+        //    //           //Log.Message("Initializng Pawn Comps");
+        //    //           //Log.Message(parent.ToString());
         //    for (int i = 0; i < this.powerdef.comps.Count; i++)
         //    {
         //        ThingComp thingComp = (ThingComp)Activator.CreateInstance(this.powerdef.comps[i].compClass);
-        //        //              if (thingComp == null) Log.Message("NoTHingComp");
+        //        //              if (thingComp == null) //Log.Message("NoTHingComp");
         //        thingComp.parent = parent;
-        //        // if (this.comps == null) Log.Message("NoCompslist");
+        //        // if (this.comps == null) //Log.Message("NoCompslist");
 
         //        thingComp.Initialize(this.powerdef.comps[i]);
         //        this.comps.Add(thingComp);

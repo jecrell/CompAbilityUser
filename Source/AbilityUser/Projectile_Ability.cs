@@ -61,14 +61,14 @@ namespace AbilityUser
 
         public override void Impact_Override(Thing hitThing)
         {
+            base.Impact_Override(hitThing);
             if (hitThing != null)
             {
-                base.Impact_Override(hitThing);
-                    int damageAmountBase = this.def.projectile.damageAmountBase;
-                    ThingDef equipmentDef = this.equipmentDef;
-                    DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
-                    hitThing.TakeDamage(dinfo);
-                    PostImpactEffects(hitThing);
+                int damageAmountBase = this.def.projectile.damageAmountBase;
+                ThingDef equipmentDef = this.equipmentDef;
+                DamageInfo dinfo = new DamageInfo(this.def.projectile.damageDef, damageAmountBase, this.ExactRotation.eulerAngles.y, this.launcher, null, equipmentDef);
+                hitThing.TakeDamage(dinfo);
+                PostImpactEffects(hitThing);
             }
         }
 
@@ -88,13 +88,18 @@ namespace AbilityUser
                     {
                         if (compAbility.ignoredHediffs() != null)
                         {
-                            if (compAbility.ignoredHediffs().Contains(hediff.def)) { Log.Message("IgnoreHediff Passed"); return true; }
+                            if (compAbility.ignoredHediffs().Contains(hediff.def))
+                            {
+                                //Log.Message("IgnoreHediff Passed"); 
+                                return true;
+                            }
                         }
                     }
                 }
             }
-            return false;
-        }
 
+            return false;
+
+        }
     }
 }

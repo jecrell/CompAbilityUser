@@ -35,11 +35,12 @@ namespace AbilityUser
             //CompAbilityUser.IsActive = true;
             this.AddFinishAction(() =>
             {
-                //   Log.Message("FinishACtion");
+                //   //Log.Message("FinishACtion");
                 //if (CompAbilityUser.IsActive)
                 //{
-                    //PsykerUtility.PsykerShockEvents(CompAbilityUser, CompAbilityUser.curPower.PowerLevel);
+                //PsykerUtility.PsykerShockEvents(CompAbilityUser, CompAbilityUser.curPower.PowerLevel);
                 //}
+                CompAbilityUser.PostAbilityAttempt(pawn, verb.ability.powerdef);
                 CompAbilityUser.ShotFired = true;
             });
         }

@@ -28,34 +28,34 @@ namespace AbilityUser
             AccessTools.Method(typeof(Targeter), "ConfirmStillValid").Invoke(__instance, null);
             if (Event.current.type == EventType.MouseDown)
             {
-                //Log.Message("1");
+                ////Log.Message("1");
                 if (Event.current.button == 0 && __instance.IsTargeting)
                 {
 
-                    //Log.Message("2");
+                    ////Log.Message("2");
                     if (__instance.targetingVerb != null)
                     {
 
-                        //Log.Message("3");
+                        ////Log.Message("3");
                         if (__instance.targetingVerb is Verb_UseAbility)
                         {
                             Verb_UseAbility abilityVerb = __instance.targetingVerb as Verb_UseAbility;
-                            //Log.Message("4");
+                            ////Log.Message("4");
                             //if (((Action<LocalTargetInfo>)AccessTools.Field(typeof(Targeter), "action").GetValue(__instance)) != null)
                             //{
 
-                            //Log.Message("5");
+                            ////Log.Message("5");
                             //TargetingParameters targetParams = (TargetingParameters)AccessTools.Field(typeof(Targeter), "targetParams").GetValue(__instance);
                             if (abilityVerb.ability.powerdef.MainVerb.AbilityTargetCategory != AbilityTargetCategory.TargetSelf)
                             {
                                 TargetingParameters targetParams = abilityVerb.ability.powerdef.MainVerb.targetParams;
                                 if (targetParams != null)
                                 {
-                                    //Log.Message("6");
+                                    ////Log.Message("6");
                                     IEnumerable<LocalTargetInfo> source = GenUI.TargetsAtMouse(targetParams, false);
                                     if (source != null && source.Count<LocalTargetInfo>() > 0)
                                     {
-                                        //Log.Message("7");
+                                        ////Log.Message("7");
                                         if (source.Any<LocalTargetInfo>())
                                         {
                                             //Pawn caster = (Pawn)AccessTools.Field(typeof(Targeter), "caster").GetValue(__instance);
@@ -67,7 +67,7 @@ namespace AbilityUser
                                                 //PostCastAbilityEffects(newVerb); //Another hook for modders
                                             }
 
-                                            //Log.Message("8");
+                                            ////Log.Message("8");
                                             //AccessTools.Method(typeof(Targeter), "action").Invoke(__instance, new object[] {  });
                                             SoundDefOf.TickHigh.PlayOneShotOnCamera();
                                             __instance.StopTargeting();
@@ -88,7 +88,7 @@ namespace AbilityUser
                                     //PostCastAbilityEffects(newVerb); //Another hook for modders
                                 }
 
-                                //Log.Message("8");
+                                ////Log.Message("8");
                                 //AccessTools.Method(typeof(Targeter), "action").Invoke(__instance, new object[] {  });
                                 SoundDefOf.TickHigh.PlayOneShotOnCamera();
                                 __instance.StopTargeting();
@@ -108,23 +108,23 @@ namespace AbilityUser
         {
             if (Find.Targeter.targetingVerb != null)
             {
-                //Log.Message("2");
+                ////Log.Message("2");
                 if (Find.Targeter.targetingVerb is Verb_UseAbility)
                 {
 
-                    //Log.Message("3");
+                    ////Log.Message("3");
                     Verb_UseAbility targetVerb = Find.Targeter.targetingVerb as Verb_UseAbility;
                     if (targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties != null)
                     {
 
-                        //Log.Message("4");
+                        ////Log.Message("4");
                         if (targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range > 0)
                         {
 
-                            //Log.Message("5");
+                            ////Log.Message("5");
                             if (Find.Targeter.targetingVerb.CanTargetCell)
                             {
-                                //Log.Message("6");
+                                ////Log.Message("6");
                                 GenDraw.DrawRadiusRing(UI.MouseCell(), targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range);
                             }
                         }

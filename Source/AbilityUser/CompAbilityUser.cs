@@ -149,7 +149,7 @@ namespace AbilityUser
             //Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
             Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
             Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
-            Log.Message("PostExposeData Called: AbilityUser");
+            //Log.Message("PostExposeData Called: AbilityUser");
         }
 
         #region virtual
@@ -176,10 +176,19 @@ namespace AbilityUser
             return true;
         }
 
-        public virtual void PostCastAbilityEffects(Verb_UseAbility verb)
-        {
 
+
+        public virtual void PostAbilityAttempt(Pawn caster, AbilityDef ability)
+        {
+            return;
         }
+
+
+        public virtual string PostAbilityVerbCompDesc(VerbProperties_Ability verbDef)
+        {
+            return "";
+        }
+
         #endregion virtual
 
         public void UpdateAbilities()
@@ -201,7 +210,7 @@ namespace AbilityUser
                 Verb_UseAbility newVerb = (Verb_UseAbility)Activator.CreateInstance(abList[i].powerdef.MainVerb.verbClass);
                 if (!AbilityVerbs.Any(item => item.verbProps == newVerb.verbProps))
                 {
-                    //Log.Message("UpdateAbilities: Added to AbilityVerbs");
+                    ////Log.Message("UpdateAbilities: Added to AbilityVerbs");
                     newVerb.caster = this.abilityUser;
                     newVerb.ability = abList[i];
                     newVerb.verbProps = abList[i].powerdef.MainVerb;
@@ -216,14 +225,14 @@ namespace AbilityUser
                 Verb_UseAbility newVerb = (Verb_UseAbility)Activator.CreateInstance(pow.powerdef.MainVerb.verbClass);
                 if (!AbilityVerbs.Any(item => item.verbProps == newVerb.verbProps))
                 {
-                    //Log.Message("UpdateAbilities: Added to pawnAbilities");
+                    ////Log.Message("UpdateAbilities: Added to pawnAbilities");
                     newVerb.caster = this.abilityUser;
                     newVerb.ability = pow;
                     newVerb.verbProps = pow.powerdef.MainVerb;
                     pawnAbilities.Add(pow, newVerb);
                 }
             }
-            //       Log.Message(this.PawnAbilitys.Count.ToString());
+            //       //Log.Message(this.PawnAbilitys.Count.ToString());
         }
 
 
@@ -277,7 +286,6 @@ namespace AbilityUser
                     if (attackAction != null)
                     {
                         attackAction();
-                        PostCastAbilityEffects(newVerb); //Another hook for modders
                     }
                 };
                 if (newVerb.caster.Faction != Faction.OfPlayer)
@@ -323,10 +331,6 @@ namespace AbilityUser
             yield break;
         }
 
-        public virtual string PostAbilityVerbCompDesc(VerbProperties_Ability verbDef)
-        {
-            return "";
-        }
 
 
         public static Job AbilityJob(AbilityTargetCategory cat, LocalTargetInfo target)
@@ -381,14 +385,10 @@ namespace AbilityUser
                         job.killIncappedTarget = pawn2.Downed;
                     }
                 }
+
                 pawn.jobs.TryTakeOrderedJob(job);
             });
             return act;
-        }
-
-        public  virtual void PostAbilityAttempt(Pawn caster, AbilityDef ability)
-        {
-            return;
         }
 
  

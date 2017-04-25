@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using UnityEngine;
 using Verse;
+using Verse.AI.Group;
 using Verse.Sound;
 
 namespace AbilityUser
@@ -20,11 +21,35 @@ namespace AbilityUser
         public Pawn Caster;
         public Thing selectedTarget;
 
+        // Verse.Projectile
+        public override void Tick()
+        {
+            //Log.Message("Tick");
+            if (this.landed)
+            {
+                return;
+            }
+            this.ticksToImpact--;
+            if (this.ticksToImpact <= 0)
+            {
+                if (this.DestinationCell.InBounds(base.Map))
+                {
+                    base.Position = this.DestinationCell;
+                }
+                this.ImpactSomething();
+                return;
+            }
+            this.ticksToImpact++;
+            base.Tick();
+        }
+
+        
         /// <summary>
         /// Applies damage on a collateral pawn or an object.
         /// </summary>
         protected void ApplyDamage(Thing hitThing)
         {
+            //Log.Message("ApplyDamage");
             if (hitThing != null)
             {
                 // Impact collateral target.
@@ -47,9 +72,15 @@ namespace AbilityUser
                 RoofDef roofDef = this.Map.roofGrid.RoofAt(this.DestinationCell);
                 if (roofDef != null && roofDef.isThickRoof)
                 {
-                    SoundInfo info = SoundInfo.InMap(new TargetInfo(this.DestinationCell, this.Map, false), MaintenanceType.None);
-                    this.def.projectile.soundHitThickRoof.PlayOneShot(info);
-                    return;
+                    if (this.def.projectile != null)
+                    {
+                        if (this.def.projectile.soundHitThickRoof != null)
+                        {
+                            SoundInfo info = SoundInfo.InMap(new TargetInfo(this.DestinationCell, this.Map, false), MaintenanceType.None);
+                            this.def.projectile.soundHitThickRoof.PlayOneShot(info);
+                            return;
+                        }
+                    }
                 }
             }
 
@@ -109,98 +140,128 @@ namespace AbilityUser
 
         public void ApplyHediffsAndMentalStates(Pawn victim)
         {
-            if (localApplyMentalStates != null)
+            try
             {
-                if (localApplyMentalStates.Count > 0)
+                //Log.Message("ApplyHediffsAndMentalStates");
+                if (localApplyMentalStates != null)
                 {
-                    foreach (ApplyMentalStates mentalStateGiver in localApplyMentalStates)
+                    if (localApplyMentalStates.Count > 0)
                     {
-                        bool success = false;
-                        float checkValue = Rand.Value;
-                        if (checkValue <= mentalStateGiver.applyChance)
+                        foreach (ApplyMentalStates mentalStateGiver in localApplyMentalStates)
                         {
-                            string str = "MentalStateByPsyker".Translate(new object[]
-                             {
+                            bool success = false;
+                            float checkValue = Rand.Value;
+                            if (checkValue <= mentalStateGiver.applyChance)
+                            {
+                                string str = "MentalStateByPsyker".Translate(new object[]
+                                 {
                             victim.NameStringShort,
-                             });
-                            if (mentalStateGiver.mentalStateDef == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
-                            {
-                                if (Caster == victim || CanOverpower(Caster, victim))
+                                 });
+                                if (mentalStateGiver.mentalStateDef == MentalStateDefOf.Berserk && victim.RaceProps.intelligence < Intelligence.Humanlike)
                                 {
-                                    success = true;
-                                    victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
+                                    if (Caster == victim || CanOverpower(Caster, victim))
+                                    {
+                                        success = true;
+                                        victim.mindState.mentalStateHandler.TryStartMentalState(MentalStateDefOf.Manhunter, str, true);
+                                    }
+                                }
+                                else
+                                {
+                                    if (Caster == victim || CanOverpower(Caster, victim))
+                                    {
+                                        success = true;
+                                        victim.mindState.mentalStateHandler.TryStartMentalState(mentalStateGiver.mentalStateDef, str, true);
+                                    }
                                 }
                             }
+                            if (success)
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate(), 12f);
                             else
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate(), 12f);
+                        }
+                    }
+                }
+                if (localApplyHediffs != null)
+                {
+                    if (localApplyHediffs.Count > 0)
+                    {
+                        foreach (ApplyHediffs hediffs in localApplyHediffs)
+                        {
+                            bool success = false;
+                            if (Rand.Value <= hediffs.applyChance)
                             {
-                                if (Caster == victim || CanOverpower(Caster, victim))
+                                if (victim == Caster || CanOverpower(Caster, victim))
                                 {
+                                    Hediff newHediff = HediffMaker.MakeHediff(hediffs.hediffDef, victim, null);
+                                    victim.health.AddHediff(newHediff, null, null);
+                                    newHediff.Severity = hediffs.severity;
                                     success = true;
-                                    victim.mindState.mentalStateHandler.TryStartMentalState(mentalStateGiver.mentalStateDef, str, true);
                                 }
                             }
+                            if (success)
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate());
+                            else
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate());
                         }
-                        if (success)
-                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate(), 12f);
-                        else
-                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate(), 12f);
                     }
                 }
             }
-            if (localApplyHediffs != null)
+            catch (NullReferenceException e)
             {
-                if (localApplyHediffs.Count > 0)
+                
+            }
+        }
+
+        public Faction ResolveFaction(SpawnThings spawnables)
+        {
+            FactionDef factionDefToAssign = FactionDefOf.PlayerColony;
+            if (spawnables.factionDef != null) factionDefToAssign = spawnables.factionDef;
+            if (spawnables.kindDef != null)
+            {
+                if (spawnables.kindDef.defaultFactionType != null) factionDefToAssign = spawnables.kindDef.defaultFactionType;
+            }
+
+            return FactionUtility.DefaultFactionFrom(factionDefToAssign);
+        }
+
+        public void SpawnPawn(SpawnThings spawnables, Faction faction)
+        {
+            Pawn newPawn = PawnGenerator.GeneratePawn(spawnables.kindDef, faction);
+            GenSpawn.Spawn(newPawn, UI.MouseCell(), Find.VisibleMap);
+            if (faction != null && faction != Faction.OfPlayer)
+            {
+                Lord lord = null;
+                if (newPawn.Map.mapPawns.SpawnedPawnsInFaction(faction).Any((Pawn p) => p != newPawn))
                 {
-                    foreach (ApplyHediffs hediffs in localApplyHediffs)
-                    {
-                        bool success = false;
-                        if (Rand.Value <= hediffs.applyChance)
-                        {
-                            if (victim == Caster || CanOverpower(Caster, victim))
-                            {
-                                Hediff newHediff = HediffMaker.MakeHediff(hediffs.hediffDef, victim, null);
-                                victim.health.AddHediff(newHediff, null, null);
-                                newHediff.Severity = hediffs.severity;
-                                success = true;
-                            }
-                        }
-                        if (success)
-                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate());
-                        else
-                            MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate());
-                    }
+                    Predicate<Thing> validator = (Thing p) => p != newPawn && ((Pawn)p).GetLord() != null;
+                    Pawn p2 = (Pawn)GenClosest.ClosestThing_Global(newPawn.Position, newPawn.Map.mapPawns.SpawnedPawnsInFaction(faction), 99999f, validator);
+                    lord = p2.GetLord();
                 }
+                if (lord == null)
+                {
+                    LordJob_DefendPoint lordJob = new LordJob_DefendPoint(newPawn.Position);
+                    lord = LordMaker.MakeNewLord(faction, lordJob, Find.VisibleMap, null);
+                }
+                lord.AddPawn(newPawn);
             }
         }
 
         public void SingleSpawnLoop(SpawnThings spawnables)
         {
+            //Log.Message("SingleSpawnLoops");
             if (spawnables.def != null)
             {
-                FactionDef factionDefToAssign = FactionDefOf.PlayerColony;
-                if (spawnables.factionDef != null) factionDefToAssign = spawnables.factionDef;
-                Faction factionToAssign = Find.FactionManager.FirstFactionOfDef(factionDefToAssign);
+                //Log.Message("2");
 
-                if (spawnables.def.race != null && spawnables.def.race.Humanlike)
+                Faction factionToAssign = ResolveFaction(spawnables);
+                if (spawnables.def.race != null)
                 {
                     if (spawnables.kindDef == null) { Log.Error("Missing kinddef"); return; }
-                    Pawn pawn = PawnGenerator.GeneratePawn(spawnables.kindDef, factionToAssign);
-                    foreach (WorkTypeDef current in DefDatabase<WorkTypeDef>.AllDefs)
-                    {
-                        if (!pawn.story.WorkTypeIsDisabled(current))
-                        {
-                            pawn.workSettings.SetPriority(current, 3);
-                        }
-                    }
-                    GenSpawn.Spawn(pawn, this.PositionHeld, this.MapHeld, Rot4.Random);
-                }
-                else if (spawnables.def.race != null && (!spawnables.def.race.Humanlike))
-                {
-                    if (spawnables.kindDef == null) { Log.Error("Missing kinddef"); return; }
-                    GenSpawn.Spawn(PawnGenerator.GeneratePawn(spawnables.kindDef, factionToAssign), this.PositionHeld, this.MapHeld);
+                    SpawnPawn(spawnables, factionToAssign);
                 }
                 else
                 {
+                    //Log.Message("3b");
                     ThingDef thingDef = spawnables.def;
                     ThingDef stuff = null;
                     if (thingDef.MadeFromStuff)
@@ -217,15 +278,22 @@ namespace AbilityUser
 
         public void SpawnSpawnables()
         {
+            //Log.Message("SpawnSpawnables");
             if (localSpawnThings != null && localSpawnThings.Count > 0)
             {
+
+                //Log.Message("1S");
                 foreach (SpawnThings spawnables in localSpawnThings)
                 {
+
+                    //Log.Message("2S");
                     if (spawnables.spawnCount == 1) SingleSpawnLoop(spawnables);
                     else
                     {
                         for (int i = 0; i < spawnables.spawnCount; i++)
                         {
+
+                            //Log.Message("3S");
                             SingleSpawnLoop(spawnables);
                         }
                     }
@@ -235,6 +303,7 @@ namespace AbilityUser
 
         public virtual void Impact_Override(Thing hitThing)
         {
+            //Log.Message("ImpactOverride");
             if (hitThing != null)
             {
                 Pawn victim = hitThing as Pawn;
@@ -242,18 +311,20 @@ namespace AbilityUser
                 {
                     if (mpdef != null)
                     {
+                        SpawnSpawnables();
                         ApplyHediffsAndMentalStates(victim);
                         return;
                     }
                 }
 
             }
-            ApplyHediffsAndMentalStates(Caster);
             SpawnSpawnables();
+            ApplyHediffsAndMentalStates(Caster);
         }
         
         public void Launch(Thing launcher, Vector3 origin, LocalTargetInfo targ, Thing equipment = null, List<ApplyHediffs> applyHediffs = null, List<ApplyMentalStates> applyMentalStates = null, List<SpawnThings> spawnThings = null)
         {
+            //Log.Message("Projectile_AbilityBase");
             localApplyHediffs = applyHediffs;
             localApplyMentalStates = applyMentalStates;
             localSpawnThings = spawnThings;
@@ -262,7 +333,7 @@ namespace AbilityUser
 
         protected override void Impact(Thing hitThing)
         {
-            base.Impact(hitThing);
+            //Log.Message("Impact");
             Impact_Override(hitThing);
             if (hitThing != null)
             {
@@ -275,6 +346,7 @@ namespace AbilityUser
                     }
                 }
             }
+            base.Impact(hitThing);
         }
 
     }

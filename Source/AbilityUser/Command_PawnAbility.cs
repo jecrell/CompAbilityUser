@@ -22,8 +22,6 @@ namespace AbilityUser
         public CompAbilityUser compAbilityUser = null;
         public Verb verb = null;
         public PawnAbility pawnAbility = null;
-        public static readonly Texture2D EmptyTex = SolidColorMaterials.NewSolidColorTexture(Color.clear);
-        public static readonly Texture2D FullTex = SolidColorMaterials.NewSolidColorTexture(0.5f, 0.5f, 0.5f, 0.6f);
 
 
         public Command_PawnAbility(CompAbilityUser compAbilityUser, PawnAbility ability)
@@ -132,7 +130,7 @@ namespace AbilityUser
             float x = pawnAbility.TicksUntilCasting;
             float y = pawnAbility.MaxCastingTicks;
             float fill = x / y;
-            Widgets.FillableBar(rect, fill, FullTex, EmptyTex, false);
+            Widgets.FillableBar(rect, fill, AbilityButtons.FullTex, AbilityButtons.EmptyTex, false);
             if (flag2)
             {
                 if (this.disabled)

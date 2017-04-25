@@ -77,6 +77,9 @@ namespace AbilityUser
                     case AbilityTargetCategory.TargetThing:
                         s.AppendLine("AU_Type".Translate() + "AU_TargetThing".Translate());
                         break;
+                    case AbilityTargetCategory.TargetLocation:
+                        s.AppendLine("AU_Type".Translate() + "AU_TargetLocation".Translate());
+                        break;
                 }
                 if (def.tooltipShowProjectileDamage)
                 {

@@ -10,6 +10,7 @@ namespace AbilityUser
     {
         TargetSelf,
         TargetThing,
+        TargetLocation,
         TargetAoE
     }
 }
