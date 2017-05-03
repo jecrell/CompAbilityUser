@@ -227,7 +227,7 @@ namespace AbilityUser
         public void SpawnPawn(SpawnThings spawnables, Faction faction)
         {
             Pawn newPawn = PawnGenerator.GeneratePawn(spawnables.kindDef, faction);
-            GenSpawn.Spawn(newPawn, UI.MouseCell(), Find.VisibleMap);
+            GenSpawn.Spawn(newPawn, this.PositionHeld, Find.VisibleMap);
             if (faction != null && faction != Faction.OfPlayer)
             {
                 Lord lord = null;

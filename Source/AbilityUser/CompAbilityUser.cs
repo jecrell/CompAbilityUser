@@ -47,7 +47,6 @@ namespace AbilityUser
 
             this.UpdateAbilities();
         }
-
         public void RemovePawnAbility(AbilityDef abilityDef)
         {
             PawnAbility abilityToRemove = this.Powers.FirstOrDefault(x => x.powerdef.defName == abilityDef.defName);
@@ -83,7 +82,6 @@ namespace AbilityUser
         {
             base.PostSpawnSetup();
         }
-
         public override void CompTick()
         {
             base.CompTick();
@@ -104,7 +102,6 @@ namespace AbilityUser
             }
             this.TicksToCastPercentage = (1 - (this.TicksToCast / this.TicksToCastMax));
         }
-
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
         {
@@ -235,7 +232,10 @@ namespace AbilityUser
             //       //Log.Message(this.PawnAbilitys.Count.ToString());
         }
 
-
+        public virtual bool CanOverpowerTarget(Pawn user, Thing target, AbilityDef ability)
+        {
+            return true;
+        }
 
         public IEnumerable<Command_PawnAbility> GetPawnAbilityVerbs()
         {
@@ -285,7 +285,7 @@ namespace AbilityUser
                     Action attackAction = CompAbilityUser.TryCastAbility(abilityUser, target, this, newVerb, allPowers[j].powerdef as AbilityDef);
                     if (attackAction != null)
                     {
-                        attackAction();
+                        if (CanOverpowerTarget(abilityUser, target, allPowers[j].powerdef as AbilityDef)) attackAction();
                     }
                 };
                 if (newVerb.caster.Faction != Faction.OfPlayer)
