@@ -98,9 +98,9 @@ namespace AbilityUser
         public void ExposeData()
         {
             //base.ExposeData();
-            Scribe_Values.LookValue<int>(ref this.TicksUntilCasting, "TicksUntilcasting", -1);
-            Scribe_References.LookReference<Pawn>(ref this.pawn, "pawn");
-            Scribe_Defs.LookDef<AbilityDef>(ref this.powerdef, "powerdef");
+            Scribe_Values.Look<int>(ref this.TicksUntilCasting, "TicksUntilcasting", -1);
+            Scribe_References.Look<Pawn>(ref this.pawn, "pawn");
+            Scribe_Defs.Look<AbilityDef>(ref this.powerdef, "powerdef");
             //Scribe_Collections.LookList<ThingComp>(ref this.comps, "comps", LookMode.Undefined);
             if (Scribe.mode == LoadSaveMode.PostLoadInit)
             {

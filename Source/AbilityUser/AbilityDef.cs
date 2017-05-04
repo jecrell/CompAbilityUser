@@ -40,17 +40,17 @@ namespace AbilityUser
                 if (def.TargetAoEProperties != null)
                 {
                     StringBuilder s = new StringBuilder();
-                    s.AppendLine("AU_AoEProperties".Translate());
+                    s.AppendLine(StringsToTranslate.AU_AoEProperties);
                     if (def.TargetAoEProperties.targetClass == typeof(Pawn))
-                        s.AppendLine("\t" + "AU_TargetClass".Translate() + "AU_AoECharacters".Translate());
+                        s.AppendLine("\t" + StringsToTranslate.AU_TargetClass + StringsToTranslate.AU_TargetClass);
                     else
-                        s.AppendLine("\t" + "AU_TargetClass".Translate() + def.TargetAoEProperties.targetClass.ToString().CapitalizeFirst());
+                        s.AppendLine("\t" + StringsToTranslate.AU_TargetClass + def.TargetAoEProperties.targetClass.ToString().CapitalizeFirst());
                     s.AppendLine("\t" + "Range".Translate() + ": " + def.TargetAoEProperties.range.ToString());
-                    s.AppendLine("\t" + "AU_AoEFriendlyFire".Translate() + def.TargetAoEProperties.friendlyFire.ToString());
-                    s.AppendLine("\t" + "AU_AoEMaxTargets".Translate() + def.TargetAoEProperties.maxTargets.ToString());
+                    s.AppendLine("\t" + StringsToTranslate.AU_TargetClass + def.TargetAoEProperties.friendlyFire.ToString());
+                    s.AppendLine("\t" + StringsToTranslate.AU_AoEMaxTargets + def.TargetAoEProperties.maxTargets.ToString());
                     if (def.TargetAoEProperties.startsFromCaster)
                     {
-                        s.AppendLine("\t" + "AU_AoEStartsFromCaster".Translate());
+                        s.AppendLine("\t" + StringsToTranslate.AU_AoEStartsFromCaster);
                     }
                     result = s.ToString();
                 }
@@ -65,20 +65,20 @@ namespace AbilityUser
             if (def != null)
             {
                 StringBuilder s = new StringBuilder();
-                s.AppendLine("AU_Cooldown".Translate() + def.SecondsToRecharge.ToString("N0") + " " + "SecondsLower".Translate());
+                s.AppendLine(StringsToTranslate.AU_Cooldown + def.SecondsToRecharge.ToString("N0") + " " + "SecondsLower".Translate());
                 switch (def.AbilityTargetCategory)
                 {
                     case AbilityTargetCategory.TargetAoE:
-                        s.AppendLine("AU_Type".Translate() + "AU_TargetAoE".Translate());
+                        s.AppendLine(StringsToTranslate.AU_Type + StringsToTranslate.AU_TargetAoE);
                         break;
                     case AbilityTargetCategory.TargetSelf:
-                        s.AppendLine("AU_Type".Translate() + "AU_TargetSelf".Translate());
+                        s.AppendLine(StringsToTranslate.AU_Type + StringsToTranslate.AU_TargetSelf);
                         break;
                     case AbilityTargetCategory.TargetThing:
-                        s.AppendLine("AU_Type".Translate() + "AU_TargetThing".Translate());
+                        s.AppendLine(StringsToTranslate.AU_Type + StringsToTranslate.AU_TargetThing);
                         break;
                     case AbilityTargetCategory.TargetLocation:
-                        s.AppendLine("AU_Type".Translate() + "AU_TargetLocation".Translate());
+                        s.AppendLine(StringsToTranslate.AU_Type + StringsToTranslate.AU_TargetLocation);
                         break;
                 }
                 if (def.tooltipShowProjectileDamage)
@@ -90,7 +90,7 @@ namespace AbilityUser
                             if (def.projectileDef.projectile.damageAmountBase > 0)
                             {
                                 s.AppendLine("Damage".Translate() + ": " + def.projectileDef.projectile.damageAmountBase);
-                                s.AppendLine("Damage".Translate() + " " + "AU_Type".Translate() + def.projectileDef.projectile.damageDef.LabelCap);
+                                s.AppendLine("Damage".Translate() + " " + StringsToTranslate.AU_Type + def.projectileDef.projectile.damageDef.LabelCap);
                             }
                         }
                     }
@@ -101,16 +101,16 @@ namespace AbilityUser
                     {
                         if (def.extraDamages.Count == 1)
                         {
-                            s.AppendLine("AU_Extra".Translate() + " " + "Damage".Translate() + ": " + def.extraDamages[0].damage);
-                            s.AppendLine("AU_Extra".Translate() + " " + "Damage".Translate() + " " + "AU_Type".Translate() + def.extraDamages[0].damageDef.LabelCap);
+                            s.AppendLine(StringsToTranslate.AU_Extra + " " + "Damage".Translate() + ": " + def.extraDamages[0].damage);
+                            s.AppendLine(StringsToTranslate.AU_Extra + " " + "Damage".Translate() + " " + StringsToTranslate.AU_Type + def.extraDamages[0].damageDef.LabelCap);
                         }
                         else
                         {
-                            s.AppendLine("AU_Extra".Translate() + " " + "Damage".Translate() + ": ");
+                            s.AppendLine(StringsToTranslate.AU_Extra + " " + "Damage".Translate() + ": ");
                             foreach (ExtraDamage extraDam in def.extraDamages)
                             {
-                                s.AppendLine("\t" + "AU_Extra".Translate() + " " + "Damage".Translate() + " " + "AU_Type".Translate() + extraDam.damageDef.LabelCap);
-                                s.AppendLine("\t" + "AU_Extra".Translate() + " " + "Damage".Translate() + ": " + extraDam.damage);
+                                s.AppendLine("\t" + StringsToTranslate.AU_Extra + " " + "Damage".Translate() + " " + StringsToTranslate.AU_Type + extraDam.damageDef.LabelCap);
+                                s.AppendLine("\t" + StringsToTranslate.AU_Extra + " " + "Damage".Translate() + ": " + extraDam.damage);
                             }
                         }
                     }
@@ -121,11 +121,11 @@ namespace AbilityUser
                     {
                         if (def.mentalStatesToApply.Count == 1)
                         {
-                            s.AppendLine("AU_MentalStateChance".Translate() + ": " + def.mentalStatesToApply[0].mentalStateDef.LabelCap + " " + def.mentalStatesToApply[0].applyChance.ToStringPercent());
+                            s.AppendLine(StringsToTranslate.AU_MentalStateChance + ": " + def.mentalStatesToApply[0].mentalStateDef.LabelCap + " " + def.mentalStatesToApply[0].applyChance.ToStringPercent());
                         }
                         else
                         {
-                            s.AppendLine("AU_MentalStateChance".Translate());
+                            s.AppendLine(StringsToTranslate.AU_MentalStateChance);
                             foreach (ApplyMentalStates mentalState in def.mentalStatesToApply)
                             {
                                 s.AppendLine("\t" + mentalState.mentalStateDef.LabelCap + " " + mentalState.applyChance.ToStringPercent());
@@ -140,11 +140,11 @@ namespace AbilityUser
                     {
                         if (def.hediffsToApply.Count == 1)
                         {
-                            s.AppendLine("AU_EffectChance".Translate() + def.hediffsToApply[0].hediffDef.LabelCap + " " + def.hediffsToApply[0].applyChance.ToStringPercent());
+                            s.AppendLine(StringsToTranslate.AU_EffectChance + def.hediffsToApply[0].hediffDef.LabelCap + " " + def.hediffsToApply[0].applyChance.ToStringPercent());
                         }
                         else
                         {
-                            s.AppendLine("AU_EffectChance".Translate());
+                            s.AppendLine(StringsToTranslate.AU_EffectChance);
                             foreach (ApplyHediffs hediff in def.hediffsToApply)
                             {
                                 float duration = 0;
@@ -161,6 +161,10 @@ namespace AbilityUser
                             }
 
                         }
+                    }
+                    if (def.burstShotCount > 1)
+                    {
+                        s.AppendLine(StringsToTranslate.AU_BurstShotCount + " " + def.burstShotCount.ToString());
                     }
                 }
 

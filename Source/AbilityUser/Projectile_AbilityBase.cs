@@ -175,9 +175,9 @@ namespace AbilityUser
                                 }
                             }
                             if (success)
-                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate(), 12f);
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, StringsToTranslate.AU_CastSuccess, 12f);
                             else
-                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate(), 12f);
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, StringsToTranslate.AU_CastFailure, 12f);
                         }
                     }
                 }
@@ -199,9 +199,9 @@ namespace AbilityUser
                                 }
                             }
                             if (success)
-                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastSuccess".Translate());
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, StringsToTranslate.AU_CastSuccess);
                             else
-                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, "PJ_CastFailure".Translate());
+                                MoteMaker.ThrowText(Caster.PositionHeld.ToVector3(), Caster.MapHeld, StringsToTranslate.AU_CastFailure);
                         }
                     }
                 }

@@ -120,13 +120,10 @@ namespace AbilityUser
                         ////Log.Message("4");
                         if (targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range > 0)
                         {
-
-                            ////Log.Message("5");
-                            if (Find.Targeter.targetingVerb.CanTargetCell)
-                            {
+                            
                                 ////Log.Message("6");
                                 GenDraw.DrawRadiusRing(UI.MouseCell(), targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range);
-                            }
+                            
                         }
                     }
                 }

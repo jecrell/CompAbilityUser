@@ -78,10 +78,11 @@ namespace AbilityUser
             }
         }
 
-        public override void PostSpawnSetup()
+        public override void PostSpawnSetup(bool respawningAfterLoad)
         {
-            base.PostSpawnSetup();
+            base.PostSpawnSetup(respawningAfterLoad);
         }
+
         public override void CompTick()
         {
             base.CompTick();
@@ -123,29 +124,29 @@ namespace AbilityUser
         public override void PostExposeData()
         {
             //base.PostExposeData();
-            Scribe_Collections.LookList<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[]
+            Scribe_Collections.Look<PawnAbility>(ref this.allPowers, "allPowers", LookMode.Deep, new object[]
                 {
                     this,
                 });
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[]
+            Scribe_Collections.Look<PawnAbility>(ref this.temporaryApparelPowers, "temporaryApparelPowers", LookMode.Deep, new object[]
                 {
                     this,
                 });
-            Scribe_Collections.LookList<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[]
+            Scribe_Collections.Look<PawnAbility>(ref this.temporaryWeaponPowers, "temporaryWeaponPowers", LookMode.Deep, new object[]
                 {
                     this,
                 });
-            Scribe_Collections.LookList<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[]
+            Scribe_Collections.Look<PawnAbility>(ref this.Powers, "Powers", LookMode.Deep, new object[]
                 {
                     this,
                 });
 
-            Scribe_Values.LookValue<int>(ref this.TicksToCast, "TicksToCast", 0, false);
-            Scribe_Values.LookValue<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
-            Scribe_Values.LookValue<float>(ref this.TicksToCastPercentage, "TicksToCastPercentage", 1, false);
-            //Scribe_Values.LookValue<bool>(ref this.IsActive, "IsActive", false, false);
-            Scribe_Values.LookValue<bool>(ref this.ShotFired, "ShotFired", true, false);
-            Scribe_Values.LookValue<bool>(ref this.IsInitialized, "IsInitialized", false);
+            Scribe_Values.Look<int>(ref this.TicksToCast, "TicksToCast", 0, false);
+            Scribe_Values.Look<int>(ref this.TicksToCastMax, "TicksToCastMax", 1, false);
+            Scribe_Values.Look<float>(ref this.TicksToCastPercentage, "TicksToCastPercentage", 1, false);
+            //Scribe_Values.Look<bool>(ref this.IsActive, "IsActive", false, false);
+            Scribe_Values.Look<bool>(ref this.ShotFired, "ShotFired", true, false);
+            Scribe_Values.Look<bool>(ref this.IsInitialized, "IsInitialized", false);
             //Log.Message("PostExposeData Called: AbilityUser");
         }
 
