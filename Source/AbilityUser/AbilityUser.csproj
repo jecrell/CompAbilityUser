@@ -35,7 +35,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Harmony109\0Harmony.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp, Version=0.16.6198.16102, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp, Version=0.17.6341.30827, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\RimWorldWin_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
@@ -43,13 +43,12 @@
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\RimWorldWin_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +62,8 @@
     <Compile Include="CompAbilityUser.cs" />
     <Compile Include="CompProperties_AbilityUser.cs" />
     <Compile Include="ExtraDamage.cs" />
+    <Compile Include="FlyingObject.cs" />
+    <Compile Include="FlyingObject_Equipable.cs" />
     <Compile Include="HarmonyPatches.cs" />
     <Compile Include="JobDriver_CastAbilitySelf.cs" />
     <Compile Include="JobDriver_CastAbilityVerb.cs" />

@@ -296,7 +296,7 @@ namespace AbilityUser
                 string reason = "";
                 if (newVerb.CasterIsPawn)
                 {
-                    if (newVerb.CasterPawn.story.DisabledWorkTags.Contains(WorkTags.Violent) && allPowers[j].powerdef.MainVerb.isViolent)
+                    if (newVerb.CasterPawn.story.WorkTagIsDisabled(WorkTags.Violent) && allPowers[j].powerdef.MainVerb.isViolent)
                     {
                         command_CastPower.Disable("IsIncapableOfViolence".Translate(new object[]
                         {
