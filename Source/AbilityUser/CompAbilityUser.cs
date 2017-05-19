@@ -14,10 +14,12 @@ namespace AbilityUser
      Bless you, Ohu."
                                     -Jecrell
     */
-    
+
     public class CompAbilityUser : CompUseEffect
     {
-        
+
+        protected static bool classRegisteredWithUtility = false;
+
         //public AbilityPowerManager abilityPowerManager;
         public LocalTargetInfo CurTarget;
         public AbilityDef curPower;
@@ -86,22 +88,29 @@ namespace AbilityUser
         public override void CompTick()
         {
             base.CompTick();
-            if (!IsInitialized) Initialize();
-            this.TicksToCast--;
-            if (this.TicksToCast < -1)
-            {
-                //this.IsActive = true;
-                this.ShotFired = true;
-                this.TicksToCast = -1;
+//            Log.Message("CompAbiltyUser Tick");
+            if ( !IsInitialized && TryTransformPawn() ) {
+                Log.Warning(" YES: a CompAbilityUser is being Initialized");
+                Initialize();
             }
-            if (Powers != null && Powers.Count > 0)
-            {
-                foreach (PawnAbility power in Powers)
+            if ( IsInitialized ) {
+                Log.Message("CompAbiltyUser CompTick");
+                this.TicksToCast--;
+                if (this.TicksToCast < -1)
                 {
-                    power.PawnAbilityTick();
+                    //this.IsActive = true;
+                    this.ShotFired = true;
+                    this.TicksToCast = -1;
                 }
+                if (Powers != null && Powers.Count > 0)
+                {
+                    foreach (PawnAbility power in Powers)
+                    {
+                        power.PawnAbilityTick();
+                    }
+                }
+                this.TicksToCastPercentage = (1 - (this.TicksToCast / this.TicksToCastMax));
             }
-            this.TicksToCastPercentage = (1 - (this.TicksToCast / this.TicksToCastMax));
         }
 
         public override IEnumerable<Gizmo> CompGetGizmosExtra()
@@ -156,6 +165,7 @@ namespace AbilityUser
 
         public virtual void Initialize()
         {
+            Log.Warning(" CompAbilityUser.Initialize ");
             IsInitialized = true;
             //this.abilityPowerManager = new AbilityPowerManager(this);
             PostInitialize();
@@ -392,7 +402,13 @@ namespace AbilityUser
             return act;
         }
 
- 
+
+        // override this in your children. this is used to determine if this pawn
+        // should be instantiated with this type of CompAbilityUser. By default,
+        // returns false.
+        public virtual bool TryTransformPawn() { return false; }
+
+
 
     }
 

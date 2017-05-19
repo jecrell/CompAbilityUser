@@ -55,6 +55,7 @@
     <Compile Include="AbilityButtons.cs" />
     <Compile Include="AbilityDef.cs" />
     <Compile Include="AbilityDefOf.cs" />
+    <Compile Include="AbilityUserUtility.cs" />
     <Compile Include="AoEProperties.cs" />
     <Compile Include="ApplyHediffs.cs" />
     <Compile Include="ApplyMentalStates.cs" />

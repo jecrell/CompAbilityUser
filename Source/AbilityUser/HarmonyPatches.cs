@@ -20,6 +20,31 @@ namespace AbilityUser
             HarmonyInstance harmony = HarmonyInstance.Create("rimworld.jecrell.abilityuser");
             harmony.Patch(AccessTools.Method(typeof(Targeter), "TargeterUpdate"), new HarmonyMethod(typeof(HarmonyPatches).GetMethod("TargeterUpdate_PostFix")), null);
             harmony.Patch(AccessTools.Method(typeof(Targeter), "ProcessInputEvents"), new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ProcessInputEvents_PreFix")), null);
+
+            // Initializes the AbilityUsers on Pawns
+            harmony.Patch(AccessTools.Method(typeof(Pawn), "ExposeData"), null, new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ExposeData_PostFix")), null);
+
+//            Log.Message("getting tm");
+            var tm1 = typeof(Verse.PawnGenerator);//Type.GetType("RimWorld.PawnGenerator");
+//            Log.Message("tm1 : "+tm1);
+            var tm = AccessTools.Method(tm1,"GeneratePawn",new Type[] { typeof(Verse.PawnGenerationRequest) });
+                //, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy );
+                //, null,
+                //new Type[] { typeof(PawnGenerationRequest) },
+                //null);
+//            Log.Message("got tm of "+tm);
+
+            var rm = typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix");
+//            Log.Message("got rm of "+rm);
+
+
+            harmony.Patch(
+                tm,//Type.GetType("PawnGenerator").GetMethod("GeneratePawn",new Type[] { typeof(PawnGenerationRequest) }),
+                null,
+                new HarmonyMethod(rm),
+                null);
+
+                //new HarmonyMethod( typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix")));
         }
 
         // RimWorld.Targeter
@@ -120,16 +145,33 @@ namespace AbilityUser
                         ////Log.Message("4");
                         if (targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range > 0)
                         {
-                            
+
                                 ////Log.Message("6");
                                 GenDraw.DrawRadiusRing(UI.MouseCell(), targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range);
-                            
+
                         }
                     }
                 }
             }
         }
 
+
+
+        // Catches loading of Pawns
+        public static void ExposeData_PostFix(Pawn __instance)
+        { HarmonyPatches.internalAddInAbilityUsers(__instance); }
+
+        // Catches generation of Pawns
+        public static void GeneratePawn_PostFix(PawnGenerationRequest request, Pawn __result)
+        { HarmonyPatches.internalAddInAbilityUsers(__result); }
+
+        // Add in any AbilityUser Components, if the Pawn is accepting
+        public static void internalAddInAbilityUsers(Pawn pawn)
+        {
+//            Log.Message("Trying to add AbilityUsers to Pawn");
+            if ( pawn != null && pawn.RaceProps != null && pawn.RaceProps.Humanlike)
+            { AbilityUserUtility.TransformPawn(pawn); }
+        }
 
     }
 }
