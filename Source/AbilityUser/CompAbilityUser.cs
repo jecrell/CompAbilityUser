@@ -90,11 +90,11 @@ namespace AbilityUser
             base.CompTick();
 //            Log.Message("CompAbiltyUser Tick");
             if ( !IsInitialized && TryTransformPawn() ) {
-                Log.Warning(" YES: a CompAbilityUser is being Initialized");
+//                Log.Warning(" YES: a CompAbilityUser is being Initialized");
                 Initialize();
             }
             if ( IsInitialized ) {
-                Log.Message("CompAbiltyUser CompTick");
+//                Log.Message("CompAbiltyUser CompTick");
                 this.TicksToCast--;
                 if (this.TicksToCast < -1)
                 {
@@ -165,7 +165,7 @@ namespace AbilityUser
 
         public virtual void Initialize()
         {
-            Log.Warning(" CompAbilityUser.Initialize ");
+//            Log.Warning(" CompAbilityUser.Initialize ");
             IsInitialized = true;
             //this.abilityPowerManager = new AbilityPowerManager(this);
             PostInitialize();
@@ -405,8 +405,8 @@ namespace AbilityUser
 
         // override this in your children. this is used to determine if this pawn
         // should be instantiated with this type of CompAbilityUser. By default,
-        // returns false.
-        public virtual bool TryTransformPawn() { return false; }
+        // returns true.
+        public virtual bool TryTransformPawn() { return true; }
 
 
 

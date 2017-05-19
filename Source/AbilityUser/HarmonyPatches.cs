@@ -23,28 +23,9 @@ namespace AbilityUser
 
             // Initializes the AbilityUsers on Pawns
             harmony.Patch(AccessTools.Method(typeof(Pawn), "ExposeData"), null, new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ExposeData_PostFix")), null);
-
-//            Log.Message("getting tm");
-            var tm1 = typeof(Verse.PawnGenerator);//Type.GetType("RimWorld.PawnGenerator");
-//            Log.Message("tm1 : "+tm1);
-            var tm = AccessTools.Method(tm1,"GeneratePawn",new Type[] { typeof(Verse.PawnGenerationRequest) });
-                //, BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy );
-                //, null,
-                //new Type[] { typeof(PawnGenerationRequest) },
-                //null);
-//            Log.Message("got tm of "+tm);
-
-            var rm = typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix");
-//            Log.Message("got rm of "+rm);
-
-
             harmony.Patch(
-                tm,//Type.GetType("PawnGenerator").GetMethod("GeneratePawn",new Type[] { typeof(PawnGenerationRequest) }),
-                null,
-                new HarmonyMethod(rm),
-                null);
-
-                //new HarmonyMethod( typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix")));
+                AccessTools.Method(typeof(Verse.PawnGenerator),"GeneratePawn",new Type[] { typeof(Verse.PawnGenerationRequest) }),
+                null, new HarmonyMethod(typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix")), null);
         }
 
         // RimWorld.Targeter

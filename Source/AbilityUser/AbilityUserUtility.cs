@@ -64,7 +64,7 @@ namespace AbilityUser
             if ( AbilityUserUtility.abilityUserChildren == null ) {
 //                Log.Message("initializing all abilityUserChlildren");
                 AbilityUserUtility.abilityUserChildren = AbilityUserUtility.GetAllChildrenOf(typeof(CompAbilityUser));
-                Log.Message("initializing CompAbilityUser children: found "+AbilityUserUtility.abilityUserChildren.Count+" classes");
+//                Log.Message("initializing CompAbilityUser children: found "+AbilityUserUtility.abilityUserChildren.Count+" classes");
             }
 
             foreach ( Type t in AbilityUserUtility.abilityUserChildren) {
@@ -77,7 +77,7 @@ namespace AbilityUser
                 if ( shouldtransform is bool ) st = (bool) shouldtransform;
                 */
                 if ( st ) {
-                    Log.Message(" YES: actually adding in AbilityUser");
+//                    Log.Message(" YES: actually adding in AbilityUser");
                     retval = true;
                     ThingComp thingComp = (ThingComp)Activator.CreateInstance((t));
                     thingComp.parent = p;
