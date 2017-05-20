@@ -20,6 +20,12 @@ namespace AbilityUser
             HarmonyInstance harmony = HarmonyInstance.Create("rimworld.jecrell.abilityuser");
             harmony.Patch(AccessTools.Method(typeof(Targeter), "TargeterUpdate"), new HarmonyMethod(typeof(HarmonyPatches).GetMethod("TargeterUpdate_PostFix")), null);
             harmony.Patch(AccessTools.Method(typeof(Targeter), "ProcessInputEvents"), new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ProcessInputEvents_PreFix")), null);
+
+            // Initializes the AbilityUsers on Pawns
+            harmony.Patch(AccessTools.Method(typeof(Pawn), "ExposeData"), null, new HarmonyMethod(typeof(HarmonyPatches).GetMethod("ExposeData_PostFix")), null);
+            harmony.Patch(
+                AccessTools.Method(typeof(Verse.PawnGenerator),"GeneratePawn",new Type[] { typeof(Verse.PawnGenerationRequest) }),
+                null, new HarmonyMethod(typeof(HarmonyPatches).GetMethod("GeneratePawn_PostFix")), null);
         }
 
         // RimWorld.Targeter
@@ -120,16 +126,33 @@ namespace AbilityUser
                         ////Log.Message("4");
                         if (targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range > 0)
                         {
-                            
+
                                 ////Log.Message("6");
                                 GenDraw.DrawRadiusRing(UI.MouseCell(), targetVerb.useAbilityProps.abilityDef.MainVerb.TargetAoEProperties.range);
-                            
+
                         }
                     }
                 }
             }
         }
 
+
+
+        // Catches loading of Pawns
+        public static void ExposeData_PostFix(Pawn __instance)
+        { HarmonyPatches.internalAddInAbilityUsers(__instance); }
+
+        // Catches generation of Pawns
+        public static void GeneratePawn_PostFix(PawnGenerationRequest request, Pawn __result)
+        { HarmonyPatches.internalAddInAbilityUsers(__result); }
+
+        // Add in any AbilityUser Components, if the Pawn is accepting
+        public static void internalAddInAbilityUsers(Pawn pawn)
+        {
+//            Log.Message("Trying to add AbilityUsers to Pawn");
+            if ( pawn != null && pawn.RaceProps != null && pawn.RaceProps.Humanlike)
+            { AbilityUserUtility.TransformPawn(pawn); }
+        }
 
     }
 }

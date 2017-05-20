@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+  <name>AbilityUser</name>
+  <author>jecrell</author>
+  <url></url>
+  <targetVersion>0.17.0</targetVersion>
+  <description>
+      jecrell's composed mod to add user abilities.
+
+      Additions by roxxploxx.
+  </description>
+</ModMetaData>
